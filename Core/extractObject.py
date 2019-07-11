@@ -53,6 +53,7 @@ def extractObject(image, boxes, masks, class_ids, title="", figsize=(16,16)):
 
     return image
 
+
 def attachImageTest(background_image, object_image, x, y):
     rows, cols, channels = object_image.shape
 
@@ -78,7 +79,7 @@ if __name__ == '__main__':
     import random
 
 
-    ROOT_DIR = os.path.abspath("../../")
+    ROOT_DIR = os.path.abspath("../")
     print(ROOT_DIR)
 
     #sys.path.append(os.path.join(ROOT_DIR, "Mask_RCNN/samples/coco/"))
@@ -131,7 +132,7 @@ if __name__ == '__main__':
     r = results[0]
     extractObject(image, r['rois'], r['masks'], r['class_ids'])
 
-    object = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object.jpg"))
-    background = cv2.imread(os.path.join(ROOT_DIR,"images/background/waters.jpg"))
+    object = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object01.jpg"))
+    background = cv2.imread(os.path.join(ROOT_DIR,"images/background/road1.jpg"))
 
-    attachImageTest(background, object, 100, 200)
+    attachImageTest(background, object, 500, 400)
