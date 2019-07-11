@@ -27,7 +27,10 @@ def apply_mask_inverse(image, mask, color):
         )
     return image
 
-def extractObject(image, boxes, masks, class_ids, title="", figsize=(16,16)):
+object_count = 0
+
+def extractObject(image, boxes, masks, class_ids):
+    global object_count
 
     N = boxes.shape[0]
     if not N:
@@ -37,19 +40,43 @@ def extractObject(image, boxes, masks, class_ids, title="", figsize=(16,16)):
 
     colors = random_colors(N)
 
-    height, width = image.shape[:2]
-
     color = colors[0]
+    clone = image.copy()
 
     y1, x1, y2, x2 = boxes[0]
-
     mask = masks[:, :, 0]
 
-    image = apply_mask_inverse(image, mask, color)
+    image_masked = apply_mask_inverse(clone, mask, color)
+    roi = image_masked[y1:y2, x1:x2]
+    cv2.imwrite(os.path.join(ROOT_DIR, "images/object/Object"+str(object_count)+".jpg"), roi)
 
-    roi = image[y1:y2, x1:x2]
+    object_count+=1
 
-    cv2.imwrite(os.path.join(ROOT_DIR, "images/object/Object.jpg"), roi)
+
+j = 0;
+
+def extractObjects(image, boxes, masks, class_ids):
+    global j
+
+    N = boxes.shape[0]
+    if not N:
+        print("\n*** No instances to display *** \n")
+    else:
+        assert boxes.shape[0] == masks.shape[-1] == class_ids.shape[0]
+
+    colors = random_colors(N)
+
+    for i, color in enumerate(colors):
+        clone = image.copy()
+
+        y1, x1, y2, x2 = boxes[i]
+        mask = masks[:, :, i]
+
+        image_masked = apply_mask_inverse(clone, mask, color)
+        roi = image_masked[y1:y2, x1:x2]
+        cv2.imwrite(os.path.join(ROOT_DIR, "images/object/Object"+str(j)+str(i)+".jpg"), roi)
+
+    j=j+1
 
     return image
 
@@ -74,22 +101,21 @@ def attachImageTest(background_image, object_image, x, y):
 
 if __name__ == '__main__':
     import os
-    import sys
     import random
 
-
-    ROOT_DIR = os.path.abspath("../../")
+    ROOT_DIR = os.path.abspath("../")
     print(ROOT_DIR)
 
-    #sys.path.append(os.path.join(ROOT_DIR, "Mask_RCNN/samples/coco/"))
     import Mask_RCNN.samples.coco.coco as coco
 
     MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-    COCO_MODEL_PATH = os.path.join(ROOT_DIR, "Mask_RCNN/mask_rcnn_coco.h5")
+    COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
     if not os.path.exists(COCO_MODEL_PATH):
         utils.download_trained_weights(COCO_MODEL_PATH)
 
     IMAGE_DIR = os.path.join(ROOT_DIR, "Mask_RCNN/images")
+
+    TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images/testimages")
 
     class InferenceConfig(coco.CocoConfig):
         GPU_COUNT = 1
@@ -121,17 +147,28 @@ if __name__ == '__main__':
         'teddy bear', 'hair drier', 'toothbrush'
     ]
 
+    imagefiles = os.listdir(TEST_IMAGE_DIR)
+
+    for filename in imagefiles:
+        image = cv2.imread(os.path.join(TEST_IMAGE_DIR,filename))
+        results = model.detect([image], verbose=1)
+
+        r = results[0]
+        extractObject(image, r['rois'], r['masks'], r['class_ids'])
+
+
+
     # file_names = next(os.walk(IMAGE_DIR))[2]
     # image = cv2.imread(os.path.join(IMAGE_DIR, random.choice(file_names)))
-    file_name = "images/testimages/example_04.jpg"
-    image = cv2.imread(os.path.join(ROOT_DIR, file_name))
+    # file_name = "car01.jpg"
+    # image = cv2.imread(os.path.join(TEST_IMAGE_DIR, file_name))
+    #
+    # results = model.detect([image], verbose=1)
+    #
+    # r = results[0]
+    # extractObject(image, r['rois'], r['masks'], r['class_ids'])
 
-    results = model.detect([image], verbose=1)
+    #imgobject = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object.jpg"))
+    #background = cv2.imread(os.path.join(ROOT_DIR,"images/background/waters.jpg"))
 
-    r = results[0]
-    extractObject(image, r['rois'], r['masks'], r['class_ids'])
-
-    object = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object.jpg"))
-    background = cv2.imread(os.path.join(ROOT_DIR,"images/background/waters.jpg"))
-
-    attachImageTest(background, object, 100, 200)
+    #attachImageTest(background, imgobject, 100, 200)
