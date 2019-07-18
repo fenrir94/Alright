@@ -81,7 +81,7 @@ def extractObjects(image, boxes, masks, class_ids):
     return image
 
 def attachImageTest(background_image, object_image, x, y):
-    rows, cols, channels = object_image.shape
+    rows, cols, _ = object_image.shape
 
     roi = background_image[x:rows+x, y:cols+y]
 

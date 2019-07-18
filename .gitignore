@@ -1,0 +1,7 @@
+
+.idea/
+cocoapi/
+Mask_RCNN/
+*.h5
+images/
+
