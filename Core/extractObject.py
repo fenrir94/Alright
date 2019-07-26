@@ -97,7 +97,8 @@ def attachImageTest(background_image, object_image, x, y):
 
     background_image[x:rows+x,y:cols+y] = dst
 
-    cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/NewImage.jpg"), background_image)
+    return background_image
+    # cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/NewImage.jpg"), background_image)
 
 
 if __name__ == '__main__':
