@@ -70,7 +70,6 @@ def roadview_to_background(images):
 
 if __name__ == '__main__':
     import os
-    import copy
     from Core.extractObject import attachImageTest
 
     ROOT_DIR = os.path.abspath("../")
@@ -87,7 +86,7 @@ if __name__ == '__main__':
     for background in backgrounds:
         height, width, channels = background.shape
         for singleObject in objects:
-            tmpbk = copy.deepcopy(background)
+            tmpbk = background.copy()
             attachedImage = attachImageTest(tmpbk, singleObject, int(width/2), int(height/2))
             combinedImageSet.append(attachedImage)
             cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/GeneratedImage%d.jpg" % d), attachedImage)
