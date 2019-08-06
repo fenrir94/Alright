@@ -1,6 +1,10 @@
 
 import cv2
 import numpy as np
+import os
+
+ROOT_DIR = os.path.abspath("../")
+
 from Mask_RCNN.mrcnn import utils
 import Mask_RCNN.mrcnn.model as modellib
 
