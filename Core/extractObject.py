@@ -81,7 +81,7 @@ def extractObjects(image, boxes, masks, class_ids):
     return image
 
 
-def attachImageTest(background_image, object_image, x, y):
+def attachImage(background_image, object_image, x, y):
     rows, cols, _ = object_image.shape
 
     roi = background_image[x:rows+x, y:cols+y]
@@ -101,80 +101,82 @@ def attachImageTest(background_image, object_image, x, y):
     # cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/NewImage.jpg"), background_image)
 
 
-if __name__ == '__main__':
-    import os
-    import random
 
-    ROOT_DIR = os.path.abspath("../")
-    print(ROOT_DIR)
-
-    import Mask_RCNN.samples.coco.coco as coco
-
-    MODEL_DIR = os.path.join(ROOT_DIR, "logs")
-    COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
-    if not os.path.exists(COCO_MODEL_PATH):
-        utils.download_trained_weights(COCO_MODEL_PATH)
-
-    IMAGE_DIR = os.path.join(ROOT_DIR, "Mask_RCNN/images")
-
-    TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images/testimages")
-
-    class InferenceConfig(coco.CocoConfig):
-        GPU_COUNT = 1
-        IMAGES_PER_GPU = 1
-
-    config = InferenceConfig()
-    config.display()
-
-    model = modellib.MaskRCNN(
-        mode="inference", model_dir=MODEL_DIR, config=config
-    )
-
-    model.load_weights(COCO_MODEL_PATH, by_name=True)
-    class_names = [
-        'BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
-        'bus', 'train', 'truck', 'boat', 'traffic light',
-        'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
-        'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear',
-        'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie',
-        'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
-        'kite', 'baseball bat', 'baseball glove', 'skateboard',
-        'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup',
-        'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
-        'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza',
-        'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed',
-        'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote',
-        'keyboard', 'cell phone', 'microwave', 'oven', 'toaster',
-        'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
-        'teddy bear', 'hair drier', 'toothbrush'
-    ]
-
-    imagefiles = os.listdir(TEST_IMAGE_DIR)
-
-    for filename in imagefiles:
-        image = cv2.imread(os.path.join(TEST_IMAGE_DIR,filename))
-        results = model.detect([image], verbose=1)
-
-        r = results[0]
-        extractObject(image, r['rois'], r['masks'], r['class_ids'])
-
-    # file_names = next(os.walk(IMAGE_DIR))[2]
-    # image = cv2.imread(os.path.join(IMAGE_DIR, random.choice(file_names)))
-    # file_name = "car01.jpg"
-    # image = cv2.imread(os.path.join(TEST_IMAGE_DIR, file_name))
-    #
-    # results = model.detect([image], verbose=1)
-    #
-    # r = results[0]
-    # extractObject(image, r['rois'], r['masks'], r['class_ids'])
-
-    #imgobject = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object.jpg"))
-    #background = cv2.imread(os.path.join(ROOT_DIR,"images/background/waters.jpg"))
-
-    #attachImageTest(background, imgobject, 100, 200)
-
-    object = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object01.jpg"))
-    background = cv2.imread(os.path.join(ROOT_DIR,"images/background/road1.jpg"))
-
-    attachImageTest(background, object, 500, 400)
+#
+# if __name__ == '__main__':
+#     import os
+#     import random
+#
+#     ROOT_DIR = os.path.abspath("../")
+#     print(ROOT_DIR)
+#
+#     import Mask_RCNN.samples.coco.coco as coco
+#
+#     MODEL_DIR = os.path.join(ROOT_DIR, "logs")
+#     COCO_MODEL_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
+#     if not os.path.exists(COCO_MODEL_PATH):
+#         utils.download_trained_weights(COCO_MODEL_PATH)
+#
+#     IMAGE_DIR = os.path.join(ROOT_DIR, "Mask_RCNN/images")
+#
+#     TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images/testimages")
+#
+#     class InferenceConfig(coco.CocoConfig):
+#         GPU_COUNT = 1
+#         IMAGES_PER_GPU = 1
+#
+#     config = InferenceConfig()
+#     config.display()
+#
+#     model = modellib.MaskRCNN(
+#         mode="inference", model_dir=MODEL_DIR, config=config
+#     )
+#
+#     model.load_weights(COCO_MODEL_PATH, by_name=True)
+#     class_names = [
+#         'BG', 'person', 'bicycle', 'car', 'motorcycle', 'airplane',
+#         'bus', 'train', 'truck', 'boat', 'traffic light',
+#         'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird',
+#         'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear',
+#         'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie',
+#         'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball',
+#         'kite', 'baseball bat', 'baseball glove', 'skateboard',
+#         'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup',
+#         'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple',
+#         'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza',
+#         'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed',
+#         'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote',
+#         'keyboard', 'cell phone', 'microwave', 'oven', 'toaster',
+#         'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors',
+#         'teddy bear', 'hair drier', 'toothbrush'
+#     ]
+#
+#     imagefiles = os.listdir(TEST_IMAGE_DIR)
+#
+#     for filename in imagefiles:
+#         image = cv2.imread(os.path.join(TEST_IMAGE_DIR, filename))
+#         results = model.detect([image], verbose=1)
+#
+#         r = results[0]
+#         extractObject(image, r['rois'], r['masks'], r['class_ids'])
+#
+#     # file_names = next(os.walk(IMAGE_DIR))[2]
+#     # image = cv2.imread(os.path.join(IMAGE_DIR, random.choice(file_names)))
+#     # file_name = "car01.jpg"
+#     # image = cv2.imread(os.path.join(TEST_IMAGE_DIR, file_name))
+#     #
+#     # results = model.detect([image], verbose=1)
+#     #
+#     # r = results[0]
+#     # extractObject(image, r['rois'], r['masks'], r['class_ids'])
+#
+#     #imgobject = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object.jpg"))
+#     #background = cv2.imread(os.path.join(ROOT_DIR,"images/background/waters.jpg"))
+#
+#     #attachImage(background, imgobject, 100, 200)
+#
+#     object = cv2.imread(os.path.join(ROOT_DIR, "images/object/Object01.jpg"))
+#     background = cv2.imread(os.path.join(ROOT_DIR, "images/background/road1.jpg"))
+#
+#     attachImage(background, object, 500, 400)
 

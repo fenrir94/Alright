@@ -1,7 +1,9 @@
 import numpy as np
 import glob
 import cv2
+import os
 
+from Core.config import ROOT_DIR
 
 def noisy(noise_typ, image):
    if noise_typ == "gauss":
@@ -68,31 +70,31 @@ def roadview_to_background(images):
     return backgrounds
 
 
-if __name__ == '__main__':
-    import os
-    import copy
-    from Core.extractObject import attachImageTest
-
-    ROOT_DIR = os.path.abspath("../")
-    print(os.path.join(ROOT_DIR, "images/imageAugmented/NewImage.jpg"))
-
-    # background = cv2.imread(os.path.join(ROOT_DIR, "images/imageGenerated/NewImage.jpg"))
-    roadViews = [cv2.imread(file) for file in glob.glob(os.path.join(ROOT_DIR, "images/roadViews/*.jpg"))]
-
-    backgrounds = roadview_to_background(roadViews)
-
-    objects = [cv2.imread(file) for file in glob.glob(os.path.join(ROOT_DIR, "images/object/*.jpg"))]
-    combinedImageSet = []
-    d = 0
-    for background in backgrounds:
-        height, width, channels = background.shape
-        for singleObject in objects:
-            tmpbk = copy.deepcopy(background)
-            attachedImage = attachImageTest(tmpbk, singleObject, int(width/2), int(height/2))
-            combinedImageSet.append(attachedImage)
-            cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/GeneratedImage%d.jpg" % d), attachedImage)
-            d += 1
-
+# if __name__ == '__main__':
+#     import os
+#     import copy
+#     from Core.extractObject import attachImage
+#
+#     ROOT_DIR = os.path.abspath("../")
+#     print(os.path.join(ROOT_DIR, "images/imageAugmented/NewImage.jpg"))
+#
+#     # background = cv2.imread(os.path.join(ROOT_DIR, "images/imageGenerated/NewImage.jpg"))
+#     roadViews = [cv2.imread(file) for file in glob.glob(os.path.join(ROOT_DIR, "images/roadViews/*.jpg"))]
+#
+#     backgrounds = roadview_to_background(roadViews)
+#
+#     objects = [cv2.imread(file) for file in glob.glob(os.path.join(ROOT_DIR, "images/object/*.jpg"))]
+#     combinedImageSet = []
+#     d = 0
+#     for background in backgrounds:
+#         height, width, channels = background.shape
+#         for singleObject in objects:
+#             tmpbk = copy.deepcopy(background)
+#             attachedImage = attachImage(tmpbk, singleObject, int(width / 2), int(height / 2))
+#             combinedImageSet.append(attachedImage)
+#             cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/GeneratedImage%d.jpg" % d), attachedImage)
+#             d += 1
+#
 
 
 
