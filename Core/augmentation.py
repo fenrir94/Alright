@@ -1,7 +1,9 @@
 import numpy as np
 import glob
 import cv2
+import os
 
+from Core.config import ROOT_DIR
 
 def noisy(noise_typ, image):
    if noise_typ == "gauss":
@@ -68,6 +70,7 @@ def roadview_to_background(images):
     return backgrounds
 
 
+
 if __name__ == '__main__':
     import os
     from Core.extractObject import attachImageTest
@@ -91,9 +94,6 @@ if __name__ == '__main__':
             combinedImageSet.append(attachedImage)
             cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/GeneratedImage%d.jpg" % d), attachedImage)
             d += 1
-
-
-
 
     '''
     gaussed_background = noisy("gauss", background)
