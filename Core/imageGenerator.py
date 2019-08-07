@@ -20,6 +20,7 @@ def ObjectImageGenerate(images, model = config.model):
         extractObject(image, r['rois'], r['masks'], r['class_ids'])
 
 def imageComposite(objects, backgrounds):
+    images = []
     for background in backgrounds:
         backgroundModified = backgroundAugmentation(backgrounds)
 
@@ -29,14 +30,21 @@ def imageComposite(objects, backgrounds):
     for eachObject in objectModified:
         for eachBackground in backgroundModified:
             height, width, channels = background.shape
-            attachImage(eachBackground, eachObject, random_location(width, height))
+            manipulatedImage = attachImage(eachBackground, eachObject, random_location(width, height))
+            images.insert(manipulationAugmentation(manipulatedImage))
+
+    return images
 
 def objectAugmentation(object):
     images = []
     return images
 
-def backgroundAugmentation(Background):
+def backgroundAugmentation(background):
     images = []
+    return images
+
+def manipulationAugmentation(manipulation):
+    images =[]
     return images
 
 if __name__ == '__main__':
