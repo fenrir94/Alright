@@ -23,12 +23,18 @@ def getImageDatas(keyword):
         for img in soup_page.find_all('img'):
             if "https://cdn.pixabay.com/photo/" in img.get('src'):
                 response = requests.get(img.get('src')).content
-                file_name = img.get('src')[47:]
+                hashtag = img.get('alt')
+                imagefile_name = img.get('src')[47:]
+                hashtagfile_name = imagefile_name[:imagefile_name.rfind('.')] + '.txt'
                 if not os.path.exists(cur_dir):
                     os.makedirs(cur_dir)
-                img_file = open(cur_dir + '\\' + file_name, 'wb')
+                img_file = open(cur_dir + '\\' + imagefile_name, 'wb')
+                metafile = open(cur_dir + '\\' + hashtagfile_name, 'w')
                 img_file.write(response)
+                metafile.write(hashtag)
                 img_file.close()
+                metafile.close()
+
 
 
 
