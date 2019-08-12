@@ -5,18 +5,18 @@ import os
 
 from Core.config import ROOT_DIR
 
-def noisy(noise_typ, image):
-   if noise_typ == "gauss":
-      row,col,ch= image.shape
+def noisy(noise_type, image):
+   if noise_type == "gauss":
+      row,col,channel= image.shape
       mean = 0
       var = 0.1
       sigma = var**0.5
-      gauss = np.random.normal(mean,sigma,(row,col,ch))
-      gauss = gauss.reshape(row,col,ch)
+      gauss = np.random.normal(mean,sigma,(row,col,channel))
+      gauss = gauss.reshape(row,col,channel)
       noisy = image + gauss
       return noisy
-   elif noise_typ == "s&p":
-      row,col,ch = image.shape
+   elif noise_type == "s&p":
+      row,col,channel = image.shape
       s_vs_p = 0.5
       amount = 0.004
       out = np.copy(image)
@@ -32,15 +32,15 @@ def noisy(noise_typ, image):
               for i in image.shape]
       out[coords] = 0
       return out
-   elif noise_typ == "poisson":
+   elif noise_type == "poisson":
       vals = len(np.unique(image))
       vals = 2 ** np.ceil(np.log2(vals))
       noisy = np.random.poisson(image * vals) / float(vals)
       return noisy
-   elif noise_typ =="speckle":
-      row,col,ch = image.shape
-      gauss = np.random.randn(row,col,ch)
-      gauss = gauss.reshape(row,col,ch)
+   elif noise_type =="speckle":
+      row,col,channel = image.shape
+      gauss = np.random.randn(row,col,channel)
+      gauss = gauss.reshape(row,col,channel)
       noisy = image + image * gauss
       return noisy
 
@@ -51,17 +51,17 @@ def mirroring(image):
     return imageMirrored
 
 
-def crop_top_bar(images):
+def crop_top_bar(images, startY, startX):
     crop_img = []
     for image in images:
         height, width, channels = image.shape
-        crop_img.append(image[32:height, 0:width])
+        crop_img.append(image[startY:height, startX:width])
 
     return crop_img
 
 
 def roadview_to_background(images):
-    backgrounds = crop_top_bar(images)
+    backgrounds = crop_top_bar(images, 32, 0)
     d = 0
     for background in backgrounds:
         cv2.imwrite(os.path.join(ROOT_DIR, "images/background/bkRoad%d.jpg" % d), background)
