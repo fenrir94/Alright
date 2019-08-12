@@ -36,14 +36,23 @@ def imageComposite(objects, backgrounds):
     return images
 
 def objectAugmentation(object):
+    #flip
+    #scale
+    #brightness
     images = []
     return images
 
 def backgroundAugmentation(background):
+    #flip
+    #brightness
     images = []
     return images
 
 def manipulationAugmentation(manipulation):
+    #flip
+    #weather
+    #Noise
+    #brightness
     images =[]
     return images
 
