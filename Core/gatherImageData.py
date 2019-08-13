@@ -91,7 +91,7 @@ if __name__ == '__main__':
     process2.join()
     process3.join()
     process4.join()
-    metafile = open(cur_dir + '\\hashtag.txt', 'w+')
+    metafile = open(os.path.abspath("../hashtag.txt"),  'w+')
     for i in range(0, len(imagefile_name)):
         metafile.write(imagefile_name[i] + "\t\t\t" + hashtag_content[i] + "\n")
     metafile.close()
