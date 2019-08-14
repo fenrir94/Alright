@@ -17,19 +17,19 @@ if not os.path.exists(COCO_MODEL_PATH):
 
 # IMAGE_DIR = os.path.join(ROOT_DIR, "Mask_RCNN/images")
 
-TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images/testimages")
+TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images", "testimages")
 
-Object_DIR = os.path.join(ROOT_DIR, "images/object/")
+Object_DIR = os.path.join(ROOT_DIR, "images", "object")
 
-Background_DIR = os.path.join(ROOT_DIR,"images/background")
+Background_DIR = os.path.join(ROOT_DIR,"images", "background")
 
-ComposedImage_DIR = os.path.join(ROOT_DIR,"images/composedImage")
+ComposedImage_DIR = os.path.join(ROOT_DIR,"images", "composedImage")
 
-Object_Augmented_DIR = os.path.join(ROOT_DIR, "images/object/objectAugmented/")
+Object_Augmented_DIR = os.path.join(ROOT_DIR, "images", "object","objectAugmented")
 
-Background_Augmented_DIR = os.path.join(ROOT_DIR, "images/background/backgroundAugmented/")
+Background_Augmented_DIR = os.path.join(ROOT_DIR, "images","background", "backgroundAugmented")
 
-ComposedImage_Augmented_DIR = os.path.join(ROOT_DIR, "images/composedImage/composedImageAugmented/")
+ComposedImage_Augmented_DIR = os.path.join(ROOT_DIR, "images", "composedImage", "composedImageAugmented")
 
 class InferenceConfig(coco.CocoConfig):
     GPU_COUNT = 1

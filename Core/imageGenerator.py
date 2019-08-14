@@ -1,19 +1,23 @@
 
+import numpy
 from Core.extractObject import *
 from Core.augmentation import *
 from Core.scaling import *
 from Core.config import *
 
 def loadImages(imageDirectory):
-    imagefiles = os.listdir(imageDirectory)
+    files = os.listdir(imageDirectory)
+    imagefiles = [file for file in files if file.endswith(".jpg")]
     images = []
     for filename in imagefiles:
-        images.append(cv2.imread(os.path.join(TEST_IMAGE_DIR, filename)))
+        print(filename)
+        image = cv2.imread(os.path.join(imageDirectory, filename))
+        images.append(image)
 
     return images
 
-def ObjectImageGenerate(images, model = config.model):
-    for image, n, in images:
+def ObjectImageGenerate(images, model):
+    for image in images:
         results = model.detect([image], verbose=1)
 
         r = results[0]
@@ -22,12 +26,16 @@ def ObjectImageGenerate(images, model = config.model):
 
 def imageCompositeSample(objects, backgrounds):
     images = []
-    for object in objects:
-        for background in backgrounds:
+    for objectIndex, object in enumerate(objects):
+        for backgroundIndex, background in enumerate(backgrounds):
             backgroundClone = background.copy()
             height, width, channels = background.shape
-            composedImage = attachImage(backgroundClone, object, random_location(width, height))
-            cv2.imwrite(ComposedImage_DIR, composedImage)
+            x, y = random_location(width, height)
+            composedImage = attachImage(backgroundClone, object, x, y)
+            cv2.imwrite(os.path.join(ComposedImage_DIR,
+                                     "object"+ str(objectIndex)+
+                                     "background" + str(backgroundIndex)
+                                     + ".jpg"), composedImage)
 
 
 def imageComposite(objects, backgrounds):
@@ -90,20 +98,23 @@ def augmentationWeather(images, saveDirectory):
     for imageIndex, image in enumerate(images):
         for count, weather in enumerate(WeatherSet):
             if weather == "rain":
-                imageRain = rainy(image, 1, 0.6)
-                cv2.imwrite(os.path.join(saveDirectory,
-                                     "weather/composed" + str(imageIndex) +
-                                     "Rain" + str(count) + ".jpg"), imageRain)
+                for rainEffect in range(1, 8):
+                    imageRain = rainy(image, rainEffect, 0.6)
+                    cv2.imwrite(os.path.join(saveDirectory,
+                                             "weather/composed" + str(imageIndex) +
+                                             "Rain" + str(count) + ".jpg"), imageRain)
             elif weather == "fog":
-                imageFog = fog(image, 1, 0.6)
-                cv2.imwrite(os.path.join(saveDirectory,
-                                     "weather/composed" + str(imageIndex) +
-                                     "Fog" + str(count) + ".jpg"), imageFog)
+                for fogEffect in range(1, 18):
+                    imageFog = fog(image, fogEffect, 0.6)
+                    cv2.imwrite(os.path.join(saveDirectory,
+                                             "weather/composed" + str(imageIndex) +
+                                             "Fog" + str(count) + ".jpg"), imageFog)
             elif weather == "snow":
-                imageSnow = snow(image, 1, 0.6)
-                cv2.imwrite(os.path.join(saveDirectory,
-                                     "weather/composed" + str(imageIndex) +
-                                     "Snow" + str(count) + ".jpg"), imageSnow)
+                for snowEffect in range(1, 6):
+                    imageSnow = snow(image, snowEffect, 0.6)
+                    cv2.imwrite(os.path.join(saveDirectory,
+                                             "weather/composed" + str(imageIndex) +
+                                             "Snow" + str(count) + ".jpg"), imageSnow)
 
 def augmentationBright(images, saveDirectory, imageType):
     for imageIndex, image in enumerate(images):
@@ -114,12 +125,17 @@ def augmentationBright(images, saveDirectory, imageType):
                                      "Bright" + str(count) + ".jpg"), imageBright)
 
 if __name__ == '__main__':
-    config = config.config
-    model = config.model
+    #model = model
+
+
 
     TestImages = loadImages(TEST_IMAGE_DIR)
 
     ObjectImageGenerate(TestImages, model)
 
-    imageCompositeSample(loadImages(Object_DIR), loadImages(Background_DIR))
+    objectImages = loadImages(Object_DIR)
+
+    backgroundImages = loadImages(Background_DIR)
+
+    imageCompositeSample(objectImages, backgroundImages)
 
