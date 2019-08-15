@@ -24,10 +24,9 @@ def ObjectImageGenerate(images, model):
         extractObject(image, r['rois'], r['masks'], r['class_ids'])
 
 
-def imageCompositeSample(objects, backgrounds):
+def imageComposite(objects, backgrounds):
     for objectIndex, object in enumerate(objects):
         for backgroundIndex, background in enumerate(backgrounds):
-            print(objectIndex, backgroundIndex)
             backgroundClone = background.copy()
             object_height, object_width, _ = object.shape
             background_height, background_width, _ = background.shape
@@ -59,76 +58,90 @@ def imageCompositeSample(objects, backgrounds):
 
 
 def objectAugmentation(objects):
+    print("Object Augmentation Started")
     augmentationFlip(objects, Object_Augmented_DIR, "object")
     augmentationScale(objects, Object_Augmented_DIR)
-    augmentationBright(objects, Object_Augmented_DIR, "object")
+    # augmentationBright(objects, Object_Augmented_DIR, "object")
+    print("Object Augmentation Finished")
 
 def backgroundAugmentation(backgrounds):
+    print("Background Augmentation Started")
     augmentationFlip(backgrounds, Background_Augmented_DIR, "background")
     augmentationBright(backgrounds, Background_Augmented_DIR, "background")
+    print("Background Augmentation Finished")
 
 def composedAugmentation(composed):
-    augmentationNoise(composed, ComposedImage_Augmented_DIR)
+    print("Composed Augmentation Started")
+
     augmentationWeather(composed, ComposedImage_Augmented_DIR)
+    print("Weather Finished")
     augmentationBright(composed, ComposedImage_Augmented_DIR, "composed")
+    print("Brightness Finished")
+
+    augmentationNoise(composed, ComposedImage_Augmented_DIR)
+    print("Noise Finished")
+    print("Composed Augmentation Finish")
 
 
 def augmentationFlip(images, saveDirectory, imageType):
     for imageIndex, image in enumerate(images):
         imageClone = image.copy()
         imageFlipped = mirroring(imageClone)
-        cv2.imwrite(os.path.join(saveDirectory, "flip/" + imageType + str(imageIndex)+ ".jpg"), imageFlipped)
+        cv2.imwrite(os.path.join(saveDirectory, "flip", imageType + str(imageIndex) + ".jpg"), imageFlipped)
 
 def augmentationScale(images, saveDirectory):
     for imageIndex, image in enumerate(images):
         for count, scaleRate in enumerate(ScaleSet):
             imageScaled = scale(image, scale_rate=scaleRate)
             cv2.imwrite(os.path.join(saveDirectory,
-                                     "scale/object" + str(imageIndex) +
+                                     "scale", "object" + str(imageIndex) +
                                      "Scale"+ str(count) + ".jpg"), imageScaled)
 
 def augmentationNoise(images, saveDirectory):
     for imageIndex, image in enumerate(images):
         for count, noise in enumerate(NoiseSet):
+            print("Noise: ", imageIndex, ", ", count)
             imageNoise = noisy(noise, image)
             cv2.imwrite(os.path.join(saveDirectory,
-                                     "noise/composed" + str(imageIndex) +
+                                     "noise", "composed" + str(imageIndex) +
                                      noise+ str(count) + ".jpg"), imageNoise)
 
 def augmentationWeather(images, saveDirectory):
     for imageIndex, image in enumerate(images):
         for count, weather in enumerate(WeatherSet):
+            print("Weather: ", imageIndex, ", ", count)
             if weather == "rain":
                 for rainEffect in range(1, 8):
                     imageRain = rainy(image, rainEffect, 0.6)
                     cv2.imwrite(os.path.join(saveDirectory,
-                                             "weather/composed" + str(imageIndex) +
-                                             "Rain" + str(count) + ".jpg"), imageRain)
+                                             "weather", "composed" + str(imageIndex) +
+                                             "Rain" + str(count) +
+                                             "effect" + str(rainEffect) + ".jpg"), imageRain)
             elif weather == "fog":
                 for fogEffect in range(1, 18):
                     imageFog = fog(image, fogEffect, 0.6)
                     cv2.imwrite(os.path.join(saveDirectory,
-                                             "weather/composed" + str(imageIndex) +
-                                             "Fog" + str(count) + ".jpg"), imageFog)
+                                             "weather", "composed" + str(imageIndex) +
+                                             "Fog" + str(count)
+                                             + "effect" + str(fogEffect) + ".jpg"), imageFog)
             elif weather == "snow":
                 for snowEffect in range(1, 6):
                     imageSnow = snow(image, snowEffect, 0.6)
                     cv2.imwrite(os.path.join(saveDirectory,
-                                             "weather/composed" + str(imageIndex) +
-                                             "Snow" + str(count) + ".jpg"), imageSnow)
+                                             "weather", "composed" + str(imageIndex) +
+                                             "Snow" + str(count) +
+                                             "effect" +str(snowEffect) + ".jpg"), imageSnow)
 
 def augmentationBright(images, saveDirectory, imageType):
     for imageIndex, image in enumerate(images):
         for count, bright in enumerate(BrightSet):
+            print("Brightness: ", imageIndex, ", ", count)
             imageBright = brightness_control(image, bright)
             cv2.imwrite(os.path.join(saveDirectory,
-                                     "brightness/" + imageType + str(imageIndex) +
+                                     "brightness", imageType + str(imageIndex) +
                                      "Bright" + str(count) + ".jpg"), imageBright)
 
 if __name__ == '__main__':
-    #model = model
-
-
 
     TestImages = loadImages(TEST_IMAGE_DIR)
 
@@ -136,7 +149,24 @@ if __name__ == '__main__':
 
     objectImages = loadImages(Object_DIR)
 
+    objectAugmentation(objectImages)
+
     backgroundImages = loadImages(Background_DIR)
 
-    imageCompositeSample(objectImages, backgroundImages)
+    backgroundAugmentation(backgroundImages)
+
+    objectImages.extend(loadImages(Object_Flip_DIR))
+    objectImages.extend(loadImages(Object_Scale_DIR))
+    objectImages.extend(loadImages(Object_Brightness_DIR))
+
+    backgroundImages.extend(loadImages(Background_Flip_DIR))
+    backgroundImages.extend(loadImages(Background_Brightness_DIR))
+
+    imageComposite(objectImages, backgroundImages)
+
+    composedImages = loadImages(ComposedImage_DIR)
+
+    composedAugmentation(composedImages)
+
+
 
