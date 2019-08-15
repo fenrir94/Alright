@@ -25,12 +25,13 @@ def ObjectImageGenerate(images, model):
 
 
 def imageCompositeSample(objects, backgrounds):
-    images = []
     for objectIndex, object in enumerate(objects):
         for backgroundIndex, background in enumerate(backgrounds):
+            print(objectIndex, backgroundIndex)
             backgroundClone = background.copy()
-            height, width, channels = background.shape
-            x, y = random_location(width, height)
+            object_height, object_width, _ = object.shape
+            background_height, background_width, _ = background.shape
+            x, y = random_location(background_width, background_height, object_width, object_height)
             composedImage = attachImage(backgroundClone, object, x, y)
             cv2.imwrite(os.path.join(ComposedImage_DIR,
                                      "object"+ str(objectIndex)+
@@ -38,22 +39,22 @@ def imageCompositeSample(objects, backgrounds):
                                      + ".jpg"), composedImage)
 
 
-def imageComposite(objects, backgrounds):
-    composedImages = []
-    for background in backgrounds:
-        backgroundModified = backgroundAugmentation(backgrounds)
-
-    for object in objects:
-        objectModified = objectAugmentation(object)
-
-    for eachObject in objectModified:
-        for eachBackground in backgroundModified:
-            height, width, channels = background.shape
-            composedImage = attachImage(eachBackground, eachObject, random_location(width, height))
-            cv2.imwrite(ComposedImage_DIR, composedImage)
-            composedImages.insert(composedImage)
-
-    composedAugmentation(composedImages)
+# def imageComposite(objects, backgrounds):
+#     composedImages = []
+#     for background in backgrounds:
+#         backgroundModified = backgroundAugmentation(backgrounds)
+#
+#     for object in objects:
+#         objectModified = objectAugmentation(object)
+#
+#     for eachObject in objectModified:
+#         for eachBackground in backgroundModified:
+#             height, width, channels = background.shape
+#             composedImage = attachImage(eachBackground, eachObject, random_location(width, height))
+#             cv2.imwrite(ComposedImage_DIR, composedImage)
+#             composedImages.insert(composedImage)
+#
+#     composedAugmentation(composedImages)
 
 
 
