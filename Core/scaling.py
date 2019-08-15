@@ -3,9 +3,12 @@ import random
 import os
 
 
-def random_location(image_width, image_height):
-    random_x = random.randrange(0, image_width)
-    random_y = random.randrange(image_height/3, image_height)
+def random_location(background_width, background_height, object_width, object_height):
+    random_x = random.randrange(0, background_width - object_width-1)
+    random_y = background_height - object_height - 1
+    if(background_height/3 > object_height):
+        random_y = random.randrange(int(2*background_height/3), background_height - object_height - 1)
+    print(random_x, random_y)
     return random_x, random_y
 
 
