@@ -98,13 +98,16 @@ def augmentationScale(images, saveDirectory):
     metafile.close()
 
 def augmentationNoise(images, saveDirectory):
-    metafile = open(os.path.abspath("../hashtag.txt"), 'w+')
+    metafile = open(os.path.join(ComposedImage_DIR, "composed_noise.txt"), 'w+')
     for imageIndex, image in enumerate(images):
         for count, noise in enumerate(NoiseSet):
             imageNoise = noisy(noise, image)
             cv2.imwrite(os.path.join(saveDirectory,
                                      "noise/composed" + str(imageIndex) +
                                      noise + str(count) + ".jpg"), imageNoise)
+            metafile.write("noise/composed" + str(imageIndex) + noise + str(count) + ".jpg" + "\t\t\t" +
+                           "%d has been noised\n" % noise)
+    metafile.close()
 
 def augmentationWeather(images, saveDirectory):
     metafile = open(os.path.join(ComposedImage_DIR, "composed_weather.txt"), 'w+')
