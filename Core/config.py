@@ -17,11 +17,19 @@ if not os.path.exists(COCO_MODEL_PATH):
 
 # IMAGE_DIR = os.path.join(ROOT_DIR, "Mask_RCNN/images")
 
-TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images/testimages")
+TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images", "testimages")
 
-Object_DIR = os.path.join(ROOT_DIR, "images/object/")
+Object_DIR = os.path.join(ROOT_DIR, "images", "object")
 
-Background_DIR = os.path.join(ROOT_DIR,"images/background")
+Background_DIR = os.path.join(ROOT_DIR,"images", "background")
+
+ComposedImage_DIR = os.path.join(ROOT_DIR,"images", "composedImage")
+
+Object_Augmented_DIR = os.path.join(ROOT_DIR, "images", "object","objectAugmented")
+
+Background_Augmented_DIR = os.path.join(ROOT_DIR, "images","background", "backgroundAugmented")
+
+ComposedImage_Augmented_DIR = os.path.join(ROOT_DIR, "images", "composedImage", "composedImageAugmented")
 
 class InferenceConfig(coco.CocoConfig):
     GPU_COUNT = 1
@@ -32,6 +40,14 @@ config = InferenceConfig()
 model = modellib.MaskRCNN(
     mode="inference", model_dir=MODEL_DIR, config=config
 )
+
+ScaleSet = [0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5]
+
+NoiseSet = ["gauss", "s&p", "poisson", "speckle"]
+
+WeatherSet = ["rain", "fog", "snow"]
+
+BrightSet = [-150, -100, -50, 0, 50, 100, 150]
 
 model.load_weights(COCO_MODEL_PATH, by_name=True)
 class_names = [
