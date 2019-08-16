@@ -77,8 +77,8 @@ def crawlingImages(keyword):
     max_page_str = soup_main_page.find('form', {'class': 'add_search_params pure-form hide-xs hide-sm hide-md'})
     for s in max_page_str.get_text().split():
         if s.isdigit():
-            # max_page = 5
-            max_page = int(s)
+            max_page = 5
+            # max_page = int(s)
     start_page = 1
     # getImageDatas(keyword, start_page, 2, url, cur_dir, hashtag_list, imagefile_name, hashtag_content)
     process1 = Process(target=getImageDatas, args=(keyword, int(start_page), int(max_page / 4), url, cur_dir, hashtag_list, hashtag_contents))
