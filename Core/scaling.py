@@ -44,17 +44,22 @@ def weather_effect(image, effect_path, composite_rate):
     return cv2.addWeighted(image, composite_rate, effect_image, 1-composite_rate, 0)
 
 
-def brightness_control(image, brightness_rate):
+def brightness_control(image, brightness_rate, object_discrimination=0):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     hue, saturation, value = cv2.split(hsv)
+    if object_discrimination > 0:
+        object_discrimination = 35
+    elif object_discrimination < 0:
+        object_discrimination = 0
 
     if brightness_rate > 0:
         limit = 255 - brightness_rate
         value[value > limit] = 255
         value[value <= limit] += brightness_rate
+        value[value == brightness_rate] = 0
     else:
-        limit = 0 - brightness_rate
-        value[value < limit] = 0
+        limit = 0 - brightness_rate + object_discrimination
+        value[value < limit] = object_discrimination
         value[value >= limit] -= -brightness_rate
 
     final_hsv = cv2.merge((hue, saturation, value))

@@ -5,56 +5,52 @@ import os
 
 from Core.config import ROOT_DIR
 
-def noisy(noise_typ, image):
-   if noise_typ == "gauss":
-      row,col,ch= image.shape
+
+def noisy(noise_type, image):
+   if noise_type == "gauss":
+      row, col, _ = image.shape
       mean = 0
-      var = 0.1
-      sigma = var**0.5
-      gauss = np.random.normal(mean,sigma,(row,col,ch))
-      gauss = gauss.reshape(row,col,ch)
-      noisy = image + gauss
-      return noisy
-   elif noise_typ == "s&p":
-      row,col,ch = image.shape
-      s_vs_p = 0.5
+      variable = 0.1
+      sigma = variable ** 0.5
+      gauss = np.random.normal(mean,sigma,(row, col, _))
+      gauss = gauss.reshape(row, col, _)
+      return image + gauss
+   elif noise_type == "s&p":
+      row, col, _ = image.shape
+      salt_vs_pepper = 0.5
       amount = 0.004
       out = np.copy(image)
       # Salt mode
-      num_salt = np.ceil(amount * image.size * s_vs_p)
+      num_salt = np.ceil(amount * image.size * salt_vs_pepper)
       coords = [np.random.randint(0, i - 1, int(num_salt))
               for i in image.shape]
       out[coords] = 1
 
       # Pepper mode
-      num_pepper = np.ceil(amount* image.size * (1. - s_vs_p))
+      num_pepper = np.ceil(amount* image.size * (1. - salt_vs_pepper))
       coords = [np.random.randint(0, i - 1, int(num_pepper))
               for i in image.shape]
       out[coords] = 0
       return out
-   elif noise_typ == "poisson":
-      vals = len(np.unique(image))
-      vals = 2 ** np.ceil(np.log2(vals))
-      noisy = np.random.poisson(image * vals) / float(vals)
-      return noisy
-   elif noise_typ =="speckle":
-      row,col,ch = image.shape
-      gauss = np.random.randn(row,col,ch)
-      gauss = gauss.reshape(row,col,ch)
-      noisy = image + image * gauss
-      return noisy
+   elif noise_type == "poisson":
+      values = len(np.unique(image))
+      values = 2 ** np.ceil(np.log2(values))
+      return np.random.poisson(image * values) / float(values)
+   elif noise_type =="speckle":
+      row, col, _ = image.shape
+      gauss = np.random.randn(row, col, _)
+      gauss = gauss.reshape(row, col, _)
+      return image + image * gauss
 
 
 def mirroring(image):
-    imageMirrored = cv2.flip(image, 1)
-
-    return imageMirrored
+    return cv2.flip(image, 1)
 
 
 def crop_top_bar(images):
     crop_img = []
     for image in images:
-        height, width, channels = image.shape
+        height, width, _ = image.shape
         crop_img.append(image[32:height, 0:width])
 
     return crop_img
@@ -73,7 +69,7 @@ def roadview_to_background(images):
 
 if __name__ == '__main__':
     import os
-    from Core.extractObject import attachImageTest
+    from Core.extractObject import atta_ImageTest
 
     ROOT_DIR = os.path.abspath("../")
     print(os.path.join(ROOT_DIR, "images/imageAugmented/NewImage.jpg"))
@@ -87,12 +83,12 @@ if __name__ == '__main__':
     combinedImageSet = []
     d = 0
     for background in backgrounds:
-        height, width, channels = background.shape
+        height, width, _ = background.shape
         for singleObject in objects:
             tmpbk = background.copy()
-            attachedImage = attachImageTest(tmpbk, singleObject, int(width/2), int(height/2))
-            combinedImageSet.append(attachedImage)
-            cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/GeneratedImage%d.jpg" % d), attachedImage)
+            atta_edImage = atta_ImageTest(tmpbk, singleObject, int(width/2), int(height/2))
+            combinedImageSet.append(atta_edImage)
+            cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/GeneratedImage%d.jpg" % d), atta_edImage)
             d += 1
 
     '''
