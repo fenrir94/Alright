@@ -5,7 +5,6 @@ import os
 
 from Core.config import ROOT_DIR
 
-
 def noisy(noise_type, image):
     if noise_type == "gauss":
         row, col, channel = image.shape
@@ -49,7 +48,7 @@ def mirroring(image):
 def crop_top_bar(images, startY, startX):
     crop_img = []
     for image in images:
-        height, width, _ = image.shape
+        height, width, channels = image.shape
         crop_img.append(image[startY:height, startX:width])
 
     return crop_img
