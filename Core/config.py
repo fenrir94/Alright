@@ -17,11 +17,34 @@ if not os.path.exists(COCO_MODEL_PATH):
 
 # IMAGE_DIR = os.path.join(ROOT_DIR, "Mask_RCNN/images")
 
-TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images/testimages")
+TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images", "testimages")
 
-Object_DIR = os.path.join(ROOT_DIR, "images/object/")
+Object_DIR = os.path.join(ROOT_DIR, "images", "object")
 
-Background_DIR = os.path.join(ROOT_DIR,"images/background")
+Object_Augmented_DIR = os.path.join(Object_DIR, "objectAugmented")
+
+Object_Brightness_DIR = os.path.join(Object_Augmented_DIR, "brightness")
+
+Object_Flip_DIR = os.path.join(Object_Augmented_DIR, "flip")
+
+Object_Scale_DIR = os.path.join(Object_Augmented_DIR, "scale")
+
+
+Background_DIR = os.path.join(ROOT_DIR,"images", "background")
+
+Background_Augmented_DIR = os.path.join(Background_DIR, "backgroundAugmented")
+
+Background_Brightness_DIR = os.path.join(Background_Augmented_DIR, "brightness")
+
+Background_Flip_DIR = os.path.join(Background_Augmented_DIR, "flip")
+
+
+ComposedImage_DIR = os.path.join(ROOT_DIR,"images", "composedImage")
+
+ComposedImage_Augmented_DIR = os.path.join(ComposedImage_DIR, "composedImageAugmented")
+
+
+
 
 class InferenceConfig(coco.CocoConfig):
     GPU_COUNT = 1
@@ -32,6 +55,14 @@ config = InferenceConfig()
 model = modellib.MaskRCNN(
     mode="inference", model_dir=MODEL_DIR, config=config
 )
+
+ScaleSet = [0.6, 0.7, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4]
+
+NoiseSet = ["gauss", "s&p", "poisson", "speckle"]
+
+WeatherSet = ["rain", "fog", "snow"]
+
+BrightSet = [-150, -100, -50, 50, 100, 150]
 
 model.load_weights(COCO_MODEL_PATH, by_name=True)
 class_names = [

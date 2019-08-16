@@ -88,18 +88,18 @@ def extractObjects(image, boxes, masks, class_ids):
 def attachImage(background_image, object_image, x, y):
     rows, cols, _ = object_image.shape
 
-    roi = background_image[x:rows+x, y:cols+y]
+    roi = background_image[y:rows+y, x:cols+x]
 
     obj2gray = cv2.cvtColor(object_image, cv2.COLOR_BGR2GRAY)
     ret, mask_cv = cv2.threshold(obj2gray, 10, 255, cv2.THRESH_BINARY)
-    mask_inv = cv2.bitwise_not(mask_cv)
+    mask_inverse = cv2.bitwise_not(mask_cv)
 
     obj_fg = cv2.bitwise_and(object_image, object_image, mask=mask_cv)
-    back_bg = cv2.bitwise_and(roi, roi, mask=mask_inv)
+    back_bg = cv2.bitwise_and(roi, roi, mask=mask_inverse)
 
     dst = cv2.add(obj_fg, back_bg)
 
-    background_image[x:rows+x,y:cols+y] = dst
+    background_image[y:rows+y, x:cols+x] = dst
 
     return background_image
     # cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/NewImage.jpg"), background_image)
