@@ -1,5 +1,6 @@
-from Core.gatherImageData import crawlingImages
+from Core.gatherImageData import pixabay_crawling_images
 
 
 if __name__ == '__main__':
-    crawlingImages("도로")
+    # keyword convert to lower characters
+    pixabay_crawling_images("Road")
