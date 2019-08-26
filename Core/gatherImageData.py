@@ -70,7 +70,7 @@ if __name__ == '__main__':
     max_page_str = soup_main_page.find('form', {'class': 'add_search_params pure-form hide-xs hide-sm hide-md'})
     for s in max_page_str.get_text().split():
         if s.isdigit():
-            max_page = int(s)
+            max_page = 5
     start_page = 1
     process1 = Process(target=getImageDatas, args=("도로", int(start_page), int(max_page / 4), url, cur_dir, hashtag_list, imagefile_name, hashtag_content))
     print("1st start_page : %d, max_page : %d" % (start_page, max_page / 4))

@@ -32,28 +32,13 @@ def imageComposite(objects, backgrounds):
             background_height, background_width, _ = background.shape
             x, y = random_location(background_width, background_height, object_width, object_height)
             composedImage = attachImage(backgroundClone, object, x, y)
+            print("Image Composed: Object ", objectIndex, " in Background ", backgroundIndex)
             cv2.imwrite(os.path.join(ComposedImage_DIR,
                                      "object"+ str(objectIndex)+
                                      "background" + str(backgroundIndex)
                                      + ".jpg"), composedImage)
 
 
-# def imageComposite(objects, backgrounds):
-#     composedImages = []
-#     for background in backgrounds:
-#         backgroundModified = backgroundAugmentation(backgrounds)
-#
-#     for object in objects:
-#         objectModified = objectAugmentation(object)
-#
-#     for eachObject in objectModified:
-#         for eachBackground in backgroundModified:
-#             height, width, channels = background.shape
-#             composedImage = attachImage(eachBackground, eachObject, random_location(width, height))
-#             cv2.imwrite(ComposedImage_DIR, composedImage)
-#             composedImages.insert(composedImage)
-#
-#     composedAugmentation(composedImages)
 
 
 
@@ -87,12 +72,14 @@ def augmentationFlip(images, saveDirectory, imageType):
     for imageIndex, image in enumerate(images):
         imageClone = image.copy()
         imageFlipped = mirroring(imageClone)
+        print("Image Flipped: ", imageType, imageIndex)
         cv2.imwrite(os.path.join(saveDirectory, "flip", imageType + str(imageIndex) + ".jpg"), imageFlipped)
 
 def augmentationScale(images, saveDirectory):
     for imageIndex, image in enumerate(images):
         for count, scaleRate in enumerate(ScaleSet):
             imageScaled = scale(image, scale_rate=scaleRate)
+            print("Image Scaling: Object ", imageIndex, "to Scale Rate ", scaleRate)
             cv2.imwrite(os.path.join(saveDirectory,
                                      "scale", "object" + str(imageIndex) +
                                      "Scale"+ str(count) + ".jpg"), imageScaled)
@@ -100,7 +87,7 @@ def augmentationScale(images, saveDirectory):
 def augmentationNoise(images, saveDirectory):
     for imageIndex, image in enumerate(images):
         for count, noise in enumerate(NoiseSet):
-            print("Noise: ", imageIndex, ", ", count)
+            print("Noise: ", imageIndex, ", ", noise)
             imageNoise = noisy(noise, image)
             cv2.imwrite(os.path.join(saveDirectory,
                                      "noise", "composed" + str(imageIndex) +
@@ -108,34 +95,33 @@ def augmentationNoise(images, saveDirectory):
 
 def augmentationWeather(images, saveDirectory):
     for imageIndex, image in enumerate(images):
-        for count, weather in enumerate(WeatherSet):
-            print("Weather: ", imageIndex, ", ", count)
+        for weather in enumerate(WeatherSet):
             if weather == "rain":
                 for rainEffect in range(1, 8):
                     imageRain = rainy(image, rainEffect, 0.6)
+                    print("Weather - Rain: Composed ", imageIndex, ", RainEffect ", rainEffect)
                     cv2.imwrite(os.path.join(saveDirectory,
                                              "weather", "composed" + str(imageIndex) +
-                                             "Rain" + str(count) +
-                                             "effect" + str(rainEffect) + ".jpg"), imageRain)
+                                             "RainEffect" + str(rainEffect) + ".jpg"), imageRain)
             elif weather == "fog":
                 for fogEffect in range(1, 18):
                     imageFog = fog(image, fogEffect, 0.6)
+                    print("Weather - Fog: Composed ", imageIndex, ", FogEffect ", fogEffect)
                     cv2.imwrite(os.path.join(saveDirectory,
                                              "weather", "composed" + str(imageIndex) +
-                                             "Fog" + str(count)
-                                             + "effect" + str(fogEffect) + ".jpg"), imageFog)
+                                             "FogEffect" + str(fogEffect) + ".jpg"), imageFog)
             elif weather == "snow":
                 for snowEffect in range(1, 6):
                     imageSnow = snow(image, snowEffect, 0.6)
+                    print("Weather - snow: Composed ", imageIndex, ", snowEffect ", snowEffect)
                     cv2.imwrite(os.path.join(saveDirectory,
                                              "weather", "composed" + str(imageIndex) +
-                                             "Snow" + str(count) +
-                                             "effect" +str(snowEffect) + ".jpg"), imageSnow)
+                                             "SnowEffect" +str(snowEffect) + ".jpg"), imageSnow)
 
 def augmentationBright(images, saveDirectory, imageType):
     for imageIndex, image in enumerate(images):
         for count, bright in enumerate(BrightSet):
-            print("Brightness: ", imageIndex, ", ", count)
+            print("Image Brightness: ", imageType, imageIndex, ", BrightnessRate", bright)
             imageBright = brightness_control(image, bright)
             cv2.imwrite(os.path.join(saveDirectory,
                                      "brightness", imageType + str(imageIndex) +

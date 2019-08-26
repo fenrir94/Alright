@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configurations>
+    <!--comment-->
+    <Diretories>
+        <Directory file="logs"></Directory>
+        <Directory file="mask_rcnn_coco.h5"></Directory>
+        <Directory file="images"></Directory>
+        <Directory file="testImages"></Directory>
+        <Directory file="object"></Directory>
+        <Directory file="objectAugmented"></Directory>
+        <Directory file="background"></Directory>
+        <Directory file="backgroundAugmented"></Directory>
+        <Directory file="composedImage"></Directory>
+        <Directory file="composedImageAugmented"></Directory>
+        <Directory file="weather"></Directory>
+    </Diretories>
+    <classes>
+        <class></class>
+    </classes>
+    <!--comment-->
+    <Parameters_Augmentations>
+        <Augmentation name="flip">
+            <parameter>1</parameter>
+        </Augmentation>
+        <Augmentation name="scale">
+            <parameter>0.6</parameter>
+            <parameter>0.7</parameter>
+            <parameter>0.8</parameter>
+            <parameter>0.9</parameter>
+            <parameter>1.1</parameter>
+            <parameter>1.2</parameter>
+            <parameter>1.3</parameter>
+            <parameter>1.4</parameter>
+        </Augmentation>
+        <Augmentation name="weather">
+            <parameter>rain</parameter>
+            <parameter>fog</parameter>
+            <parameter>snow</parameter>
+        </Augmentation>
+        <Augmentation name="noise">
+            <parameter>gauss</parameter>
+            <parameter>salt_pepper</parameter>
+            <parameter>poisson</parameter>
+            <parameter>speckle</parameter>
+        </Augmentation>
+        <Augmentation name="brightness">
+            <parameter>-150</parameter>
+            <parameter>-100</parameter>
+            <parameter>-50</parameter>
+            <parameter>50</parameter>
+            <parameter>100</parameter>
+            <parameter>150</parameter>
+        </Augmentation>
+    </Parameters_Augmentations>
+    <Run_Augmentations>
+        <!--comment-->
+        <AugmentationTarget target="Object">
+            <Run>True</Run>
+            <Augmentations>
+                <Augmentation name="flip">
+                    <Run>True</Run>
+                </Augmentation>
+                <Augmentation name="scale">
+                    <Run>True</Run>
+                </Augmentation>
+                <Augmentation name="brightness">
+                    <Run>True</Run>
+                </Augmentation>
+            </Augmentations>
+        </AugmentationTarget>
+        <!--comment-->
+        <AugmentationTarget target="Background">
+            <Run>True</Run>
+            <Augmentations>
+                <Augmentation name="flip">
+                    <Run>True</Run>
+                </Augmentation>
+                <Augmentation name="brightness">
+                    <Run>True</Run>
+                </Augmentation>
+            </Augmentations>
+        </AugmentationTarget>
+        <!--comment-->
+        <AugmentationTarget target="ComposedImage">
+            <Run>True</Run>
+            <Augmentations>
+                <Augmentation name="noise">
+                    <Run>True</Run>
+                </Augmentation>
+                <Augmentation name="weather">
+                    <Run>True</Run>
+                </Augmentation>
+                <Augmentation name="brightness">
+                    <Run>True</Run>
+                </Augmentation>
+            </Augmentations>
+        </AugmentationTarget>
+    </Run_Augmentations>
+</configurations>

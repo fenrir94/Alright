@@ -15,7 +15,7 @@ def noisy(noise_type, image):
       gauss = gauss.reshape(row,col,channel)
       noisy = image + gauss
       return noisy
-   elif noise_type == "s&p":
+   elif noise_type == "salt_pepper":
       row,col,channel = image.shape
       s_vs_p = 0.5
       amount = 0.004

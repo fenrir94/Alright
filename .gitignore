@@ -6,3 +6,4 @@ Mask_RCNN/
 images/
 
 *.pyc
+hashtag.txt
