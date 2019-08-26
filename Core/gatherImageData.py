@@ -72,21 +72,21 @@ def get_image_data(keyword, start_page, max_page, url, cur_dir, hash_tag_list, h
             if "https://cdn.pixabay.com/photo/" in img.get('src'):
                 response = requests.get(img.get('src')).content
                 hash_tag = str(img.get('alt')).lower()
-                image_file_name = img.get('src')[47:]
+                image_file_name = f"{img.get('src')[47:-4]}${hash_tag}{img.get('src')[-4:]}"
                 img_file = open(cur_dir + '\\' + image_file_name, 'wb')
                 img_file.write(response)
                 img_file.close()
                 hash_tag_list.append(hash_tag.split(', '))
-                image_file_name_and_hash_tag.update({image_file_name: hash_tag})
+                image_file_name_and_hash_tag.update({f"{img.get('src')[47:]}": hash_tag})
             elif "/static/img/blank.gif" in img.get('src') and "https://cdn.pixabay.com/photo/" in img.get('data-lazy'):
                 response = requests.get(img.get('data-lazy')).content
                 hash_tag = str(img.get('alt')).lower()
-                image_file_name = img.get('data-lazy')[47:]
+                image_file_name = f"{img.get('data-lazy')[47:-4]}${hash_tag}{img.get('data-lazy')[-4:]}"
                 img_file = open(cur_dir + '\\' + image_file_name, 'wb')
                 img_file.write(response)
                 img_file.close()
                 hash_tag_list.append(hash_tag.split(', '))
-                image_file_name_and_hash_tag.update({image_file_name: hash_tag})
+                image_file_name_and_hash_tag.update({f"{img.get('data-lazy')[47:]}": hash_tag})
         hash_tag_content_list[i] = image_file_name_and_hash_tag
 
 
@@ -114,6 +114,25 @@ def dict_to_csv(param_dict):
         print("I/O error")
 
 
+def extract_hash_tags():
+    config = configparser.ConfigParser()
+    config.read('../config.ini')
+    keyword = config['CRAWLING']['EXTRACT_HASH_TAGS_CRAWLED_KEYWORD']
+    keyword = keyword.lower()
+    cur_dir = os.path.abspath(f"../images/background/crawledImages/{keyword}")
+    list_dict = {}
+    for list in os.listdir(cur_dir):
+        list_tmp = list.split('$')
+        list_tmp[1] = list_tmp[1][:-4]  # delete .jpg, .png, ...
+        list_dict.update({f"{list_tmp[0]}": f"{list_tmp[1]}"})
+
+    print(list_dict)
+    return list_dict
+
+
+
+
+
 def pixabay_crawling_images(keyword):
     start = time.time()
     keyword = keyword.lower()
@@ -121,7 +140,7 @@ def pixabay_crawling_images(keyword):
     manager = Manager()  # multiprocessing manager
     hash_tag_list = manager.list()
     hash_tag_contents = manager.dict()
-    Background_DIR = os.path.abspath("../images/background")
+    Background_DIR = os.path.abspath("../images/background/crawledImages")
     url = 'https://pixabay.com/en/images/search/'
     cur_dir = f'{Background_DIR}/{keyword}/'
     config = configparser.ConfigParser()
