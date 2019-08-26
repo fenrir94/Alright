@@ -3,9 +3,11 @@ import random
 import os
 
 
-def random_location(image_width, image_height):
-    random_x = random.randrange(0, image_width)
-    random_y = random.randrange(image_height/3, image_height)
+def random_location(background_width, background_height, object_width, object_height):
+    random_x = random.randrange(0, background_width - object_width)
+    random_y = background_height - object_height - 1
+    if(background_height/3 > object_height):
+        random_y = random.randrange(int(2*background_height/3), background_height - object_height)
     return random_x, random_y
 
 
@@ -44,17 +46,23 @@ def weather_effect(image, effect_path, composite_rate):
     return cv2.addWeighted(image, composite_rate, effect_image, 1-composite_rate, 0)
 
 
-def brightness_control(image, brightness_rate):
+def brightness_control(image, brightness_rate, object_discrimination=0):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     hue, saturation, value = cv2.split(hsv)
+    if object_discrimination > 0:
+        object_discrimination = 35
+    elif object_discrimination < 0:
+        object_discrimination = 0
 
     if brightness_rate > 0:
         limit = 255 - brightness_rate
         value[value > limit] = 255
         value[value <= limit] += brightness_rate
+        if object_discrimination == 35:
+            value[value == brightness_rate] = 0
     else:
-        limit = 0 - brightness_rate
-        value[value < limit] = 0
+        limit = 0 - brightness_rate + object_discrimination
+        value[value < limit] = object_discrimination
         value[value >= limit] -= -brightness_rate
 
     final_hsv = cv2.merge((hue, saturation, value))
