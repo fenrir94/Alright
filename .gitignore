@@ -6,3 +6,5 @@ Mask_RCNN/
 images/
 
 *.pyc
+hashtagCounting.csv
+hashtag.txt
