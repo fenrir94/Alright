@@ -42,5 +42,3 @@ def mirroring(image):
     imageMirrored = cv2.flip(image, 1)
 
     return imageMirrored
-
- 
