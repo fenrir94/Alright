@@ -3,6 +3,11 @@ import os
 from Mask_RCNN.mrcnn import utils
 import Mask_RCNN.mrcnn.model as modellib
 from Mask_RCNN.samples.coco import coco
+import xml.etree.ElementTree as elementree
+
+tree = elementree.parse("config.xml")
+root = tree.getroot()
+# print(root.tag)
 
 ROOT_DIR = os.path.abspath("../")
 
@@ -56,13 +61,81 @@ model = modellib.MaskRCNN(
     mode="inference", model_dir=MODEL_DIR, config=config
 )
 
-ScaleSet = [0.6, 0.7, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4]
+def setParameter(augmentation):
+    list = [parameter.text for parameter in augmentation.iter("parameter")]
+    return list
 
-NoiseSet = ["gauss", "s&p", "poisson", "speckle"]
+def setParameters():
+    augmentations = root.find("Parameters_Augmentations").findall("Augmentation")
+    for augmentation in augmentations:
+        if augmentation.attrib['name'] == "flip":
+            FlipSet = setParameter(augmentation)
+        elif augmentation.attrib['name'] == "scale":
+            ScaleSet = setParameter(augmentation)
+        elif augmentation.attrib['name'] == "noise":
+            NoiseSet = setParameter(augmentation)
+        elif augmentation.attrib['name'] == "weather":
+            WeatherSet = setParameter(augmentation)
+        elif augmentation.attrib['name'] == "brightness":
+            BrightnessSet = setParameter(augmentation)
 
-WeatherSet = ["rain", "fog", "snow"]
+    return FlipSet, ScaleSet, NoiseSet, WeatherSet, BrightnessSet
 
-BrightSet = [-150, -100, -50, 50, 100, 150]
+# setParameters()
+# print("Flip: ", FlipSet)
+# print("Scale: ", ScaleSet)
+# print("Noise: ", NoiseSet)
+# print("Weather: ", WeatherSet)
+# print("Brightness: ", BrightnessSet)
+
+def setConfiguration():
+    targets = root.find("Run_Augmentations").findall("AugmentationTarget")
+    for target in targets:
+        if target.attrib["target"] == "Object":
+            doObjectAugmetation = target.text
+            for augmentation in target.find("Augmentations").findall("Augmentation"):
+                if augmentation.attrib["name"] == "flip":
+                    doObjectFlip = augmentation.text
+                elif augmentation.attrib["name"] == "scale":
+                    doObjectScale = augmentation.text
+                elif augmentation.attrib["name"] == "brightness":
+                    doObjectBrightness = augmentation.text
+
+        elif target.attrib["target"] == "Background":
+            doBackgroundAugmentation = target.text
+            for augmentation in target.find("Augmentations").findall("Augmentation"):
+                if augmentation.attrib["name"] == "flip":
+                    doBackgroundFlip = augmentation.text
+                elif augmentation.attrib["name"] == "brightness":
+                    doBackgroundBrightness = augmentation.text
+
+        elif target.attrib["target"] == "ComposedImage":
+            doComposedImageAugmentation = target.text
+            for augmentation in target.find("Augmentations").findall("Augmentation"):
+                if augmentation.attrib["name"] == "noise":
+                    doComposedNoise = augmentation.text
+                elif augmentation.attrib["name"] == "brightness":
+                    doComposedBrightness = augmentation.text
+                elif augmentation.attrib["name"] == "weather":
+                    doComposedWeather = augmentation.text
+
+    return doObjectAugmetation, doObjectBrightness, doObjectFlip, doObjectScale, \
+           doBackgroundAugmentation, doBackgroundBrightness, doBackgroundFlip, \
+           doComposedImageAugmentation, doComposedNoise, doComposedWeather, doComposedBrightness
+
+
+# setConfiguration()
+# print(doObjectAugmetation)
+# print(doObjectFlip)
+# print(doObjectScale)
+# print(doObjectBrightness)
+# print(doBackgroundAugmentation)
+# print(doBackgroundFlip)
+# print(doBackgroundBrightness)
+# print(doComposedImageAugmentation)
+# print(doComposedNoise)
+# print(doComposedBrightness)
+# print(doComposedWeather)
 
 model.load_weights(COCO_MODEL_PATH, by_name=True)
 class_names = [

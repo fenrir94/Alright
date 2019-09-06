@@ -8,6 +8,9 @@
         <Directory file="testImages"></Directory>
         <Directory file="object"></Directory>
         <Directory file="objectAugmented"></Directory>
+        <Directory file="brightness"></Directory>
+        <Directory file="flip"></Directory>
+        <Directory file="scale"></Directory>
         <Directory file="background"></Directory>
         <Directory file="backgroundAugmented"></Directory>
         <Directory file="composedImage"></Directory>
@@ -54,45 +57,23 @@
     </Parameters_Augmentations>
     <Run_Augmentations>
         <!--comment-->
-        <AugmentationTarget target="Object">
-            <Run>True</Run>
-            <Augmentations>
-                <Augmentation name="flip">
-                    <Run>True</Run>
-                </Augmentation>
-                <Augmentation name="scale">
-                    <Run>True</Run>
-                </Augmentation>
-                <Augmentation name="brightness">
-                    <Run>True</Run>
-                </Augmentation>
+        <AugmentationTarget target="Object">True<Augmentations>
+                <Augmentation name="flip">True</Augmentation>
+                <Augmentation name="scale">True</Augmentation>
+                <Augmentation name="brightness">True</Augmentation>
             </Augmentations>
         </AugmentationTarget>
         <!--comment-->
-        <AugmentationTarget target="Background">
-            <Run>True</Run>
-            <Augmentations>
-                <Augmentation name="flip">
-                    <Run>True</Run>
-                </Augmentation>
-                <Augmentation name="brightness">
-                    <Run>True</Run>
-                </Augmentation>
+        <AugmentationTarget target="Background">True<Augmentations>
+                <Augmentation name="flip">True</Augmentation>
+                <Augmentation name="brightness">True</Augmentation>
             </Augmentations>
         </AugmentationTarget>
         <!--comment-->
-        <AugmentationTarget target="ComposedImage">
-            <Run>True</Run>
-            <Augmentations>
-                <Augmentation name="noise">
-                    <Run>True</Run>
-                </Augmentation>
-                <Augmentation name="weather">
-                    <Run>True</Run>
-                </Augmentation>
-                <Augmentation name="brightness">
-                    <Run>True</Run>
-                </Augmentation>
+        <AugmentationTarget target="ComposedImage">True<Augmentations>
+                <Augmentation name="noise">True</Augmentation>
+                <Augmentation name="weather">True</Augmentation>
+                <Augmentation name="brightness">True</Augmentation>
             </Augmentations>
         </AugmentationTarget>
     </Run_Augmentations>
