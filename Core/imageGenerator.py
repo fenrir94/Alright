@@ -84,29 +84,48 @@ def composedAugmentation(composed):
 
 
 def augmentationFlip(images, saveDirectory, imageType):
+    if imageType == "object":
+        metafile = open(os.path.join(Object_DIR, imageType + "_flip.txt"), 'w+')
+    elif imageType == "background":
+        metafile = open(os.path.join(Background_DIR, imageType + "_flip.txt"), 'w+')
+
     for imageIndex, image in enumerate(images):
         imageClone = image.copy()
         imageFlipped = mirroring(imageClone)
-        cv2.imwrite(os.path.join(saveDirectory, "flip", imageType + str(imageIndex) + ".jpg"), imageFlipped)
+        cv2.imwrite(os.path.join(saveDirectory, "flip/" + imageType + str(imageIndex)+ ".jpg"), imageFlipped)
+        metafile.write("flip/" + imageType + str(imageIndex) + ".jpg" + "\t\t\t" + "has been fliped\n")
+    metafile.close()
+
 
 def augmentationScale(images, saveDirectory):
+    metafile = open(os.path.join(Object_DIR, "object_flip.txt"), 'w+')
     for imageIndex, image in enumerate(images):
         for count, scaleRate in enumerate(ScaleSet):
             imageScaled = scale(image, scale_rate=scaleRate)
             cv2.imwrite(os.path.join(saveDirectory,
                                      "scale", "object" + str(imageIndex) +
                                      "Scale"+ str(count) + ".jpg"), imageScaled)
+            metafile.write("scale/object" + str(imageIndex) + "Scale" + str(count) + ".jpg" + "\t\t\t" +
+                           "%d has been scaled\n" % scaleRate)
+    metafile.close()
+
 
 def augmentationNoise(images, saveDirectory):
+    metafile = open(os.path.join(ComposedImage_DIR, "composed_noise.txt"), 'w+')
     for imageIndex, image in enumerate(images):
         for count, noise in enumerate(NoiseSet):
             print("Noise: ", imageIndex, ", ", count)
             imageNoise = noisy(noise, image)
             cv2.imwrite(os.path.join(saveDirectory,
-                                     "noise", "composed" + str(imageIndex) +
-                                     noise+ str(count) + ".jpg"), imageNoise)
+                                     "noise/composed" + str(imageIndex) +
+                                     noise + str(count) + ".jpg"), imageNoise)
+            metafile.write("noise/composed" + str(imageIndex) + noise + str(count) + ".jpg" + "\t\t\t" +
+                           "%d has been noised\n" % noise)
+    metafile.close()
+
 
 def augmentationWeather(images, saveDirectory):
+    metafile = open(os.path.join(ComposedImage_DIR, "composed_weather.txt"), 'w+')
     for imageIndex, image in enumerate(images):
         for count, weather in enumerate(WeatherSet):
             print("Weather: ", imageIndex, ", ", count)
@@ -117,22 +136,34 @@ def augmentationWeather(images, saveDirectory):
                                              "weather", "composed" + str(imageIndex) +
                                              "Rain" + str(count) +
                                              "effect" + str(rainEffect) + ".jpg"), imageRain)
+                    metafile.write(
+                        "brightness/" + "weather/composed" + str(imageIndex) + "Rain" + str(count) + "effect" +
+                        str(rainEffect) + ".jpg" + "\t\t\t" + "%d has been rained\n" % rainEffect)
             elif weather == "fog":
                 for fogEffect in range(1, 18):
                     imageFog = fog(image, fogEffect, 0.6)
-                    cv2.imwrite(os.path.join(saveDirectory,
-                                             "weather", "composed" + str(imageIndex) +
-                                             "Fog" + str(count)
+                    cv2.imwrite(os.path.join(saveDirectory, "weather", "composed" + str(imageIndex) + "Fog" + str(count)
                                              + "effect" + str(fogEffect) + ".jpg"), imageFog)
+                    metafile.write("brightness/" + "weather/composed" + str(imageIndex) + "Fog" + str(count) + "effect"
+                                   + str(fogEffect) + ".jpg" + "\t\t\t" + "%d has been fogged\n" % fogEffect)
             elif weather == "snow":
                 for snowEffect in range(1, 6):
                     imageSnow = snow(image, snowEffect, 0.6)
-                    cv2.imwrite(os.path.join(saveDirectory,
-                                             "weather", "composed" + str(imageIndex) +
-                                             "Snow" + str(count) +
-                                             "effect" +str(snowEffect) + ".jpg"), imageSnow)
+                    cv2.imwrite(os.path.join(saveDirectory,"weather", "composed" + str(imageIndex) + "Snow" + str(count)
+                                             + "effect" + str(snowEffect) + ".jpg"), imageSnow)
+                    metafile.write(
+                        "brightness/" + "weather/composed" + str(imageIndex) + "Snow" + str(count) + "effect"
+                        + str(snowEffect) + ".jpg" + "\t\t\t" + "%d has been snowed\n" % snowEffect)
+        metafile.close()
 
 def augmentationBright(images, saveDirectory, imageType):
+    if imageType == "object":
+        metafile = open(os.path.join(Object_DIR, imageType + "_brightness.txt"), 'w+')
+    elif imageType == "background":
+        metafile = open(os.path.join(Background_DIR, imageType + "_brightness.txt"), 'w+')
+    elif imageType == "composed":
+        metafile = open(os.path.join(ComposedImage_DIR, imageType + "_brightness.txt"), 'w+')
+
     for imageIndex, image in enumerate(images):
         for count, bright in enumerate(BrightSet):
             print("Brightness: ", imageIndex, ", ", count)
@@ -140,6 +171,9 @@ def augmentationBright(images, saveDirectory, imageType):
             cv2.imwrite(os.path.join(saveDirectory,
                                      "brightness", imageType + str(imageIndex) +
                                      "Bright" + str(count) + ".jpg"), imageBright)
+            metafile.write("brightness/" + imageType + str(imageIndex) + "Bright" + str(count) + ".jpg" + "\t\t\t" +
+                           "%d has been scaled\n" % bright)
+    metafile.close()
 
 if __name__ == '__main__':
 
