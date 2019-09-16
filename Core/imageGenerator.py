@@ -61,7 +61,7 @@ def objectAugmentation(objects):
     print("Object Augmentation Started")
     augmentationFlip(objects, Object_Augmented_DIR, "object")
     augmentationScale(objects, Object_Augmented_DIR)
-    # augmentationBright(objects, Object_Augmented_DIR, "object")
+    augmentationBright(objects, Object_Augmented_DIR, "object")
     print("Object Augmentation Finished")
 
 def backgroundAugmentation(backgrounds):
@@ -157,17 +157,19 @@ def augmentationWeather(images, saveDirectory):
         metafile.close()
 
 def augmentationBright(images, saveDirectory, imageType):
+    object_discrimination = 0
     if imageType == "object":
         metafile = open(os.path.join(Object_DIR, imageType + "_brightness.txt"), 'w+')
     elif imageType == "background":
         metafile = open(os.path.join(Background_DIR, imageType + "_brightness.txt"), 'w+')
+        object_discrimination = 35
     elif imageType == "composed":
         metafile = open(os.path.join(ComposedImage_DIR, imageType + "_brightness.txt"), 'w+')
 
     for imageIndex, image in enumerate(images):
         for count, bright in enumerate(BrightSet):
             print("Brightness: ", imageIndex, ", ", count)
-            imageBright = brightness_control(image, bright)
+            imageBright = brightness_control(image, bright, object_discrimination)
             cv2.imwrite(os.path.join(saveDirectory,
                                      "brightness", imageType + str(imageIndex) +
                                      "Bright" + str(count) + ".jpg"), imageBright)
