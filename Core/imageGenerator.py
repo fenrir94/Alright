@@ -106,7 +106,7 @@ def augmentationScale(images, saveDirectory):
                                      "scale", "object" + str(imageIndex) +
                                      "Scale"+ str(count) + ".jpg"), imageScaled)
             metafile.write("scale/object" + str(imageIndex) + "Scale" + str(count) + ".jpg" + "\t\t\t" +
-                           "%d has been scaled\n" % scaleRate)
+                           "%s has been scaled\n" % scaleRate)
     metafile.close()
 
 
@@ -120,7 +120,7 @@ def augmentationNoise(images, saveDirectory):
                                      "noise/composed" + str(imageIndex) +
                                      noise + str(count) + ".jpg"), imageNoise)
             metafile.write("noise/composed" + str(imageIndex) + noise + str(count) + ".jpg" + "\t\t\t" +
-                           "%d has been noised\n" % noise)
+                           "%s has been noised\n" % noise)
     metafile.close()
 
 
@@ -138,14 +138,14 @@ def augmentationWeather(images, saveDirectory):
                                              "effect" + str(rainEffect) + ".jpg"), imageRain)
                     metafile.write(
                         "brightness/" + "weather/composed" + str(imageIndex) + "Rain" + str(count) + "effect" +
-                        str(rainEffect) + ".jpg" + "\t\t\t" + "%d has been rained\n" % rainEffect)
+                        str(rainEffect) + ".jpg" + "\t\t\t" + "%s has been rained\n" % rainEffect)
             elif weather == "fog":
                 for fogEffect in range(1, 18):
                     imageFog = fog(image, fogEffect, 0.6)
                     cv2.imwrite(os.path.join(saveDirectory, "weather", "composed" + str(imageIndex) + "Fog" + str(count)
                                              + "effect" + str(fogEffect) + ".jpg"), imageFog)
                     metafile.write("brightness/" + "weather/composed" + str(imageIndex) + "Fog" + str(count) + "effect"
-                                   + str(fogEffect) + ".jpg" + "\t\t\t" + "%d has been fogged\n" % fogEffect)
+                                   + str(fogEffect) + ".jpg" + "\t\t\t" + "%s has been fogged\n" % fogEffect)
             elif weather == "snow":
                 for snowEffect in range(1, 6):
                     imageSnow = snow(image, snowEffect, 0.6)
@@ -153,7 +153,7 @@ def augmentationWeather(images, saveDirectory):
                                              + "effect" + str(snowEffect) + ".jpg"), imageSnow)
                     metafile.write(
                         "brightness/" + "weather/composed" + str(imageIndex) + "Snow" + str(count) + "effect"
-                        + str(snowEffect) + ".jpg" + "\t\t\t" + "%d has been snowed\n" % snowEffect)
+                        + str(snowEffect) + ".jpg" + "\t\t\t" + "%s has been snowed\n" % snowEffect)
         metafile.close()
 
 def augmentationBright(images, saveDirectory, imageType):
@@ -172,7 +172,7 @@ def augmentationBright(images, saveDirectory, imageType):
                                      "brightness", imageType + str(imageIndex) +
                                      "Bright" + str(count) + ".jpg"), imageBright)
             metafile.write("brightness/" + imageType + str(imageIndex) + "Bright" + str(count) + ".jpg" + "\t\t\t" +
-                           "%d has been scaled\n" % bright)
+                           "%s has been scaled\n" % bright)
     metafile.close()
 
 if __name__ == '__main__':
