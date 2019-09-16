@@ -3,7 +3,7 @@ import glob
 import cv2
 import os
 
-from Core.config import ROOT_DIR
+from Core.config import ROOT_DIRECTORY
 
 def noisy(noise_type, image):
    if noise_type == "gauss":
@@ -64,7 +64,7 @@ def roadview_to_background(images):
     backgrounds = crop_top_bar(images, 32, 0)
     d = 0
     for background in backgrounds:
-        cv2.imwrite(os.path.join(ROOT_DIR, "images/background/bkRoad%d.jpg" % d), background)
+        cv2.imwrite(os.path.join(ROOT_DIRECTORY, "images/background/bkRoad%d.jpg" % d), background)
         d += 1
 
     return backgrounds

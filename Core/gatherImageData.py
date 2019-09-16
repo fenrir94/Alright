@@ -26,8 +26,6 @@ def getImageDatas(keyword, start_page, max_page, url, cur_dir, hashtag_list, ima
                 imagefile_name_list.append(imagefile_name)
                 hashtag_content_list.append(hashtag)
 
-
-
 def CountFrequency(param_list):
     freq = {}
     for items in param_list:

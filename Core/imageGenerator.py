@@ -1,4 +1,5 @@
 
+import os
 import time
 import numpy
 from Core.extractObject import *
@@ -14,6 +15,17 @@ def loadImages(imageDirectory):
         print(filename)
         image = cv2.imread(os.path.join(imageDirectory, filename))
         images.append(image)
+
+    return images
+
+def loadSubdirectoryImages(directory):
+    images = []
+    for path, dir, files in os.walk(directory):
+        for filename in files:
+            # print(path, dir, filename)
+            print(filename)
+            image = cv2.imread(os.path.join(path, filename))
+            images.append(image)
 
     return images
 
@@ -34,17 +46,17 @@ def imageComposite(objects, backgrounds):
             x, y = random_location(background_width, background_height, object_width, object_height)
             composedImage = attachImage(backgroundClone, object, x, y)
             print("Image Composed: Object ", objectIndex, " in Background ", backgroundIndex)
-            cv2.imwrite(os.path.join(ComposedImage_DIR,
-                                     "object"+ str(objectIndex)+
+            cv2.imwrite(os.path.join(ComposedImage_DIRECTORY,
+                                     "object" + str(objectIndex) +
                                      "background" + str(backgroundIndex)
                                      + ".jpg"), composedImage)
 
 def objectAugmentation(objects, doAugmentation):
     if doAugmentation == "True":
         print("Object Augmentation Started")
-        augmentationFlip(objects, Object_Augmented_DIR, "object", doAugmentation=doObjectFlip)
-        augmentationScale(objects, Object_Augmented_DIR, doAugmenation=doObjectScale)
-        augmentationBright(objects, Object_Augmented_DIR, "object", doAugmentation=doObjectBrightness)
+        augmentationFlip(objects, Object_Augmented_DIRECTORY, "object", doAugmentation=doObjectFlip)
+        augmentationScale(objects, Object_Augmented_DIRECTORY, doAugmenation=doObjectScale)
+        augmentationBright(objects, Object_Augmented_DIRECTORY, "object", doAugmentation=doObjectBrightness)
         print("Object Augmentation Finished")
     else:
         print("Do Not Object Augmentation")
@@ -52,8 +64,8 @@ def objectAugmentation(objects, doAugmentation):
 def backgroundAugmentation(backgrounds, doAugmenation):
     if doAugmenation == "True":
         print("Background Augmentation Started")
-        augmentationFlip(backgrounds, Background_Augmented_DIR, "background", doAugmentation=doBackgroundFlip)
-        augmentationBright(backgrounds, Background_Augmented_DIR, "background", doAugmentation=doBackgroundBrightness)
+        augmentationFlip(backgrounds, Background_Augmented_DIRECTORY, "background", doAugmentation=doBackgroundFlip)
+        augmentationBright(backgrounds, Background_Augmented_DIRECTORY, "background", doAugmentation=doBackgroundBrightness)
         print("Background Augmentation Finished")
     else:
         print("Do Not Background Augmentation")
@@ -62,9 +74,9 @@ def composedAugmentation(composed, doAugmnetation):
     if doAugmnetation == "True":
         print("Composed Augmentation Started")
 
-        augmentationWeather(composed, ComposedImage_Augmented_DIR, doAugmentation=doComposedWeather)
-        augmentationBright(composed, ComposedImage_Augmented_DIR, "composed", doAugmentation=doComposedBrightness)
-        augmentationNoise(composed, ComposedImage_Augmented_DIR, doAugmentation=doComposedNoise)
+        augmentationWeather(composed, ComposedImage_Augmented_DIRECTORY, doAugmentation=doComposedWeather)
+        augmentationBright(composed, ComposedImage_Augmented_DIRECTORY, "composed", doAugmentation=doComposedBrightness)
+        augmentationNoise(composed, ComposedImage_Augmented_DIRECTORY, doAugmentation=doComposedNoise)
         print("Composed Augmentation Finish")
 
     else:
@@ -111,7 +123,7 @@ def augmentationNoise(images, saveDirectory, doAugmentation):
 def augmentationWeather(images, saveDirectory, doAugmentation):
     if doAugmentation == "True":
         for imageIndex, image in enumerate(images):
-            for weather in enumerate(WeatherSet):
+            for weather in WeatherSet:
                 if weather == "rain":
                     for rainEffect in range(1, 8):
                         imageRain = rainy(image, rainEffect, 0.6)
@@ -181,38 +193,41 @@ if __name__ == '__main__':
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
-    TestImages = loadImages(TEST_IMAGE_DIR)
+    images = loadSubdirectoryImages(Background_Crawling_DIRECTORY)
+
+    TestImages = loadImages(TEST_IMAGE_DIRECTORY)
 
     ObjectImageGenerate(TestImages, model)
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
-    objectImages = loadImages(Object_DIR)
+    objectImages = loadImages(Object_DIRECTORY)
 
     objectAugmentation(objectImages, doAugmentation=doObjectAugmentation)
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
-    backgroundImages = loadImages(Background_DIR)
+    backgroundImages = loadImages(Background_DIRECTORY)
 
     backgroundAugmentation(backgroundImages, doAugmenation=doBackgroundAugmentation)
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
-    objectImages.extend(loadImages(Object_Flip_DIR))
-    objectImages.extend(loadImages(Object_Scale_DIR))
-    objectImages.extend(loadImages(Object_Brightness_DIR))
+    objectImages.extend(loadSubdirectoryImages(Object_Augmented_DIRECTORY))
 
-    backgroundImages.extend(loadImages(Background_Flip_DIR))
-    backgroundImages.extend(loadImages(Background_Brightness_DIR))
+    backgroundImages.extend(loadSubdirectoryImages(Background_Augmented_DIRECTORY))
 
     imageComposite(objectImages, backgroundImages)
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
-    composedImages = loadImages(ComposedImage_DIR)
+    objectImages.clear()
+    backgroundImages.clear()
+
+    composedImages = loadImages(ComposedImage_DIRECTORY)
 
     composedAugmentation(composedImages, doAugmnetation=doComposedImageAugmentation)
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
+    composedImages.clear()
