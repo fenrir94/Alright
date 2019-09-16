@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configurations>
+    <!--comment-->
+    <Directories>
+        <Directory file="Model">logs</Directory>
+        <Directory file="mask_rcnn_coco.h5">mask_rcnn_coco.h5</Directory>
+        <Directory file="images">D:\images</Directory>
+        <Directory file="testImages">D:\images\testimages</Directory>
+        <Directory file="object">D:\images\object</Directory>
+        <Directory file="objectAugmented"></Directory>
+        <Directory file="brightness"></Directory>
+        <Directory file="flip"></Directory>
+        <Directory file="scale"></Directory>
+        <Directory file="background"></Directory>
+        <Directory file="backgroundAugmented"></Directory>
+        <Directory file="composedImage">D:\images\composedImage</Directory>
+        <Directory file="composedImageAugmented"></Directory>
+        <Directory file="weather">D:\images\weather</Directory>
+    </Directories>
+    <classes>
+        <class></class>
+    </classes>
+    <!--comment-->
+    <Parameters_Augmentations>
+        <Augmentation name="flip">
+            <parameter>1</parameter>
+        </Augmentation>
+        <Augmentation name="scale">
+            <parameter>0.6</parameter>
+            <parameter>0.7</parameter>
+            <parameter>0.8</parameter>
+            <parameter>0.9</parameter>
+            <parameter>1.1</parameter>
+            <parameter>1.2</parameter>
+            <parameter>1.3</parameter>
+            <parameter>1.4</parameter>
+        </Augmentation>
+        <Augmentation name="weather">
+            <parameter>rain</parameter>
+            <parameter>fog</parameter>
+            <parameter>snow</parameter>
+        </Augmentation>
+        <Augmentation name="noise">
+            <parameter>gauss</parameter>
+            <parameter>salt_pepper</parameter>
+            <parameter>poisson</parameter>
+            <parameter>speckle</parameter>
+        </Augmentation>
+        <Augmentation name="brightness">
+            <parameter>-150</parameter>
+            <parameter>-100</parameter>
+            <parameter>-50</parameter>
+            <parameter>50</parameter>
+            <parameter>100</parameter>
+            <parameter>150</parameter>
+        </Augmentation>
+    </Parameters_Augmentations>
+    <Run_Augmentations>
+        <!--comment-->
+        <AugmentationTarget target="Object">True<Augmentations>
+                <Augmentation name="flip">True</Augmentation>
+                <Augmentation name="scale">True</Augmentation>
+                <Augmentation name="brightness">True</Augmentation>
+            </Augmentations>
+        </AugmentationTarget>
+        <!--comment-->
+        <AugmentationTarget target="Background">True<Augmentations>
+                <Augmentation name="flip">True</Augmentation>
+                <Augmentation name="brightness">True</Augmentation>
+            </Augmentations>
+        </AugmentationTarget>
+        <!--comment-->
+        <AugmentationTarget target="ComposedImage">True<Augmentations>
+                <Augmentation name="noise">True</Augmentation>
+                <Augmentation name="weather">True</Augmentation>
+                <Augmentation name="brightness">True</Augmentation>
+            </Augmentations>
+        </AugmentationTarget>
+    </Run_Augmentations>
+</configurations>

@@ -104,9 +104,6 @@ def attachImage(background_image, object_image, x, y):
     return background_image
     # cv2.imwrite(os.path.join(ROOT_DIR, "images/imageGenerated/NewImage.jpg"), background_image)
 
-
-
-#
 # if __name__ == '__main__':
 #     import os
 #     import random
