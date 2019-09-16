@@ -1,7 +1,7 @@
 import cv2
 import random
 import os
-
+import numpy as np
 
 def random_location(background_width, background_height, object_width, object_height):
     random_x = random.randrange(0, background_width - object_width)
@@ -46,17 +46,19 @@ def weather_effect(image, effect_path, composite_rate):
     return cv2.addWeighted(image, composite_rate, effect_image, 1-composite_rate, 0)
 
 
-def brightness_control(image, brightness_rate):
+def brightness_control(image, brightness_rate, object_discrimination=0):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     hue, saturation, value = cv2.split(hsv)
 
     if brightness_rate > 0:
         limit = 255 - brightness_rate
         value[value > limit] = 255
-        value[value <= limit] += brightness_rate
+        value[np.logical_and(value > object_discrimination, value < limit)] += brightness_rate
+        if object_discrimination != 0:
+            value[np.logical_and(value > 0, value < object_discrimination)] = object_discrimination
     else:
-        limit = 0 - brightness_rate
-        value[value < limit] = 0
+        limit = 0 - brightness_rate + object_discrimination
+        value[np.logical_and(value < limit, value > 0)] = object_discrimination
         value[value >= limit] -= -brightness_rate
 
     final_hsv = cv2.merge((hue, saturation, value))
@@ -68,9 +70,29 @@ def quadrant_brightness_control(image, first_quadrant, second_quadrant, third_qu
     half_height = int(image_height/2)
     half_width = int(image_width/2)
 
-    control_image = cv2.copyMakeBorder(image,0,0,0,0,cv2.BORDER_REPLICATE)
+    control_image = cv2.copyMakeBorder(image, 0, 0, 0, 0, cv2.BORDER_REPLICATE)
     control_image[:half_height, half_width:] = brightness_control(control_image[:half_height, half_width:], first_quadrant)
     control_image[:half_height, :half_width] = brightness_control(control_image[:half_height, :half_width], second_quadrant)
     control_image[half_height:, :half_width] = brightness_control(control_image[half_height:, :half_width], third_quadrant)
     control_image[half_height:, half_width:] = brightness_control(control_image[half_height:, half_width:], fourth_quadrant)
     return control_image
+
+
+def object_distinction(image, object_discrimination=35):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    hue, saturation, value = cv2.split(hsv)
+
+    value[np.logical_and(value > 0, value < object_discrimination)] = object_discrimination
+
+    final_hsv = cv2.merge((hue, saturation, value))
+    return cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
+
+
+def object_distinction_before(image, object_discrimination=35):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    hue, saturation, value = cv2.split(hsv)
+
+    value[value < object_discrimination] = object_discrimination
+
+    final_hsv = cv2.merge((hue, saturation, value))
+    return cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)

@@ -85,30 +85,44 @@ def composedAugmentation(composed, doAugmnetation):
 
 def augmentationFlip(images, saveDirectory, imageType, doAugmentation):
     if doAugmentation == "True":
+        if imageType == "object":
+            metafile = open(os.path.join(Object_DIRECTORY, imageType + "_flip.txt"), 'w+')
+        elif imageType == "background":
+            metafile = open(os.path.join(Background_DIRECTORY, imageType + "_flip.txt"), 'w+')
+
         for imageIndex, image in enumerate(images):
             imageClone = image.copy()
             imageFlipped = mirroring(imageClone)
             print("Image Flipped: ", imageType, imageIndex)
             cv2.imwrite(os.path.join(saveDirectory, "flip", imageType + str(imageIndex) + ".jpg"), imageFlipped)
+            metafile.write("flip/" + imageType + str(imageIndex) + ".jpg" + "\t\t\t" + "has been fliped\n")
         print("Flip Finished")
     else:
         print("No Not Flip")
 
+    metafile.close()
+
 def augmentationScale(images, saveDirectory, doAugmenation):
     if doAugmenation == "True":
+        metafile = open(os.path.join(Object_DIRECTORY, "object_flip.txt"), 'w+')
         for imageIndex, image in enumerate(images):
             for count, scaleRate in enumerate(ScaleSet):
                 imageScaled = scale(image, scale_rate=float(scaleRate))
                 print("Image Scaling: Object ", imageIndex, "to Scale Rate ", scaleRate)
                 cv2.imwrite(os.path.join(saveDirectory,
-                                         "scale", "object" + str(imageIndex) +
-                                         "Scale"+ str(count) + ".jpg"), imageScaled)
+                                        "scale", "object" + str(imageIndex) +
+                                        "Scale"+ str(count) + ".jpg"), imageScaled)
+                metafile.write("scale/object" + str(imageIndex) + "Scale" + str(count) + ".jpg" + "\t\t\t" +
+                                        "%s has been scaled\n" % scaleRate)
         print("Scale Finished")
     else:
         print("Do Not Scale")
 
+    metafile.close()
+
 def augmentationNoise(images, saveDirectory, doAugmentation):
     if doAugmentation == "True":
+        metafile = open(os.path.join(ComposedImage_DIRECTORY, "composed_noise.txt"), 'w+')
         for imageIndex, image in enumerate(images):
             for count, noise in enumerate(NoiseSet):
                 print("Noise: ", imageIndex, ", ", noise)
@@ -116,14 +130,19 @@ def augmentationNoise(images, saveDirectory, doAugmentation):
                 cv2.imwrite(os.path.join(saveDirectory,
                                      "noise", "composed" + str(imageIndex) +
                                      noise+ str(count) + ".jpg"), imageNoise)
+                metafile.write("noise/composed" + str(imageIndex) + noise + str(count) + ".jpg" + "\t\t\t" +
+                               "%s has been noised\n" % noise)
         print("Noise Finished")
     else:
         print("Do Not Noise")
 
+    metafile.close()
+
 def augmentationWeather(images, saveDirectory, doAugmentation):
     if doAugmentation == "True":
+        metafile = open(os.path.join(ComposedImage_DIRECTORY, "composed_weather.txt"), 'w+')
         for imageIndex, image in enumerate(images):
-            for weather in WeatherSet:
+            for count, weather in enumerate(WeatherSet):
                 if weather == "rain":
                     for rainEffect in range(1, 8):
                         imageRain = rainy(image, rainEffect, 0.6)
@@ -131,6 +150,9 @@ def augmentationWeather(images, saveDirectory, doAugmentation):
                         cv2.imwrite(os.path.join(saveDirectory,
                                              "weather", "composed" + str(imageIndex) +
                                              "RainEffect" + str(rainEffect) + ".jpg"), imageRain)
+                        metafile.write(
+                            "brightness/" + "weather/composed" + str(imageIndex) + "Rain" + str(count) + "effect" +
+                            str(rainEffect) + ".jpg" + "\t\t\t" + "%s has been rained\n" % rainEffect)
                 elif weather == "fog":
                     for fogEffect in range(1, 18):
                         imageFog = fog(image, fogEffect, 0.6)
@@ -138,6 +160,9 @@ def augmentationWeather(images, saveDirectory, doAugmentation):
                         cv2.imwrite(os.path.join(saveDirectory,
                                              "weather", "composed" + str(imageIndex) +
                                              "FogEffect" + str(fogEffect) + ".jpg"), imageFog)
+                        metafile.write(
+                            "brightness/" + "weather/composed" + str(imageIndex) + "Fog" + str(count) + "effect"
+                            + str(fogEffect) + ".jpg" + "\t\t\t" + "%s has been fogged\n" % fogEffect)
                 elif weather == "snow":
                     for snowEffect in range(1, 6):
                         imageSnow = snow(image, snowEffect, 0.6)
@@ -145,12 +170,26 @@ def augmentationWeather(images, saveDirectory, doAugmentation):
                         cv2.imwrite(os.path.join(saveDirectory,
                                              "weather", "composed" + str(imageIndex) +
                                              "SnowEffect" +str(snowEffect) + ".jpg"), imageSnow)
+                        metafile.write(
+                            "brightness/" + "weather/composed" + str(imageIndex) + "Snow" + str(count) + "effect"
+                            + str(snowEffect) + ".jpg" + "\t\t\t" + "%s has been snowed\n" % snowEffect)
         print("Weather Finished")
     else:
         print("Do Not Weather")
 
+    metafile.close()
+
 def augmentationBright(images, saveDirectory, imageType, doAugmentation):
     if doAugmentation == "True":
+        object_discrimination = 0
+        if imageType == "object":
+            metafile = open(os.path.join(Object_DIRECTORY, imageType + "_brightness.txt"), 'w+')
+        elif imageType == "background":
+            metafile = open(os.path.join(Background_DIRECTORY, imageType + "_brightness.txt"), 'w+')
+            object_discrimination = 35
+        elif imageType == "composed":
+            metafile = open(os.path.join(ComposedImage_DIRECTORY, imageType + "_brightness.txt"), 'w+')
+
         for imageIndex, image in enumerate(images):
             for count, bright in enumerate(BrightnessSet):
                 print("Image Brightness: ", imageType, imageIndex, ", BrightnessRate", bright)
@@ -158,9 +197,30 @@ def augmentationBright(images, saveDirectory, imageType, doAugmentation):
                 cv2.imwrite(os.path.join(saveDirectory,
                                      "brightness", imageType + str(imageIndex) +
                                      "Bright" + str(count) + ".jpg"), imageBright)
+                metafile.write("brightness/" + imageType + str(imageIndex) + "Bright" + str(count) + ".jpg" + "\t\t\t" +
+                               "%s has been scaled\n" % bright)
         print("Brightness Finished")
     else:
         print("Do Not Brightness")
+
+    metafile.close()
+
+# def imageComposite(objects, backgrounds):
+#     composedImages = []
+#     for background in backgrounds:
+#         backgroundModified = backgroundAugmentation(backgrounds)
+#
+#     for object in objects:
+#         objectModified = objectAugmentation(object)
+#
+#     for eachObject in objectModified:
+#         for eachBackground in backgroundModified:
+#             height, width, channels = background.shape
+#             composedImage = attachImage(eachBackground, eachObject, random_location(width, height))
+#             cv2.imwrite(ComposedImage_DIR, composedImage)
+#             composedImages.insert(composedImage)
+#
+#     composedAugmentation(composedImages)
 
 if __name__ == '__main__':
 
