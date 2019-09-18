@@ -5,61 +5,47 @@ import Mask_RCNN.mrcnn.model as modellib
 from Mask_RCNN.samples.coco import coco
 import xml.etree.ElementTree as elementree
 
+def createFolder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            print("Folder Created - " + directory)
+    except OSError:
+        print("Error")
+
 tree = elementree.parse("config.xml")
 root = tree.getroot()
 # print(root.tag)
 
-DIRECTORIES = root.find("Directories").allfind("Directory")
-
 ROOT_DIRECTORY = os.path.abspath("../")
-
 MODEL_DIRECTORY = os.path.join(ROOT_DIRECTORY, "logs")
-
 COCO_MODEL_PATH = os.path.join(ROOT_DIRECTORY, "mask_rcnn_coco.h5")
-
 
 if not os.path.exists(COCO_MODEL_PATH):
     utils.download_trained_weights(COCO_MODEL_PATH)
 
-IMAGE_DIRECTORY = os.path.join("D:", "/images")
+# IMAGE_DIRECTORY = os.path.join("D:", "images")
+# print(IMAGE_DIRECTORY)
+
+IMAGE_DIRECTORY = root.find("Directories").find("Directory").text
 print(IMAGE_DIRECTORY)
-print("D:images\\dd")
-
-# TEST_IMAGE_DIR = os.path.join(ROOT_DIR, "images", "testimages")
-
-# Object_DIR = os.path.join(ROOT_DIR, "images", "object")
 
 TEST_IMAGE_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "testimages")
-print(TEST_IMAGE_DIRECTORY)
+
 Object_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "object")
-
 Object_Augmented_DIRECTORY = os.path.join(Object_DIRECTORY, "objectAugmented")
-
 Object_Brightness_DIRECTORY = os.path.join(Object_Augmented_DIRECTORY, "brightness")
-
 Object_Flip_DIRECTORY = os.path.join(Object_Augmented_DIRECTORY, "flip")
-
 Object_Scale_DIRECTORY = os.path.join(Object_Augmented_DIRECTORY, "scale")
 
-
-# Background_DIR = os.path.join(ROOT_DIR,"images", "background")
 Background_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "background")
-
 Background_Crawling_DIRECTORY = os.path.join(Background_DIRECTORY, "crawledImages")
-
 Background_Augmented_DIRECTORY = os.path.join(Background_DIRECTORY, "backgroundAugmented")
-
 Background_Brightness_DIR = os.path.join(Background_Augmented_DIRECTORY, "brightness")
-
 Background_Flip_DIRECTORY = os.path.join(Background_Augmented_DIRECTORY, "flip")
 
-# ComposedImage_DIR = os.path.join(ROOT_DIR,"images", "composedImage")
 ComposedImage_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "composedImage")
-
 ComposedImage_Augmented_DIRECTORY = os.path.join(ComposedImage_DIRECTORY, "composedImageAugmented")
-
-
-
 
 class InferenceConfig(coco.CocoConfig):
     GPU_COUNT = 1

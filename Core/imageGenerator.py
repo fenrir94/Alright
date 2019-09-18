@@ -34,17 +34,34 @@ def ObjectImageGenerate(images, model):
         results = model.detect([image], verbose=1)
 
         r = results[0]
+        class_id = r['class_ids']
+        label = class_names[class_id[0]]
+        print(label)
         extractObject(image, r['rois'], r['masks'], r['class_ids'])
 
 
 def imageComposite(objects, backgrounds):
+    scale_rates = []
     for objectIndex, object in enumerate(objects):
         for backgroundIndex, background in enumerate(backgrounds):
+            objectClone = object.copy()
             backgroundClone = background.copy()
-            object_height, object_width, _ = object.shape
+            rate = 1
+            object_height, object_width, _ = objectClone.shape
             background_height, background_width, _ = background.shape
+            while (object_height >= background_height or object_width >= background_width):
+                if object_height >= background_height:
+                    rate = background_height / (3*object_height)
+                    objectClone = scale(objectClone, rate)
+                elif object_width >= background_width:
+                    rate = background_width/(3*object_width)
+                    objectClone = scale(objectClone, rate)
+                print(rate)
+                object_height, object_width, _ = objectClone.shape
+                print(background_height, "   ", object_height)
+                print(background_width, "   ", object_width)
             x, y = random_location(background_width, background_height, object_width, object_height)
-            composedImage = attachImage(backgroundClone, object, x, y)
+            composedImage = attachImage(backgroundClone, objectClone, x, y)
             print("Image Composed: Object ", objectIndex, " in Background ", backgroundIndex)
             cv2.imwrite(os.path.join(ComposedImage_DIRECTORY,
                                      "object" + str(objectIndex) +
@@ -193,7 +210,7 @@ def augmentationBright(images, saveDirectory, imageType, doAugmentation):
         for imageIndex, image in enumerate(images):
             for count, bright in enumerate(BrightnessSet):
                 print("Image Brightness: ", imageType, imageIndex, ", BrightnessRate", bright)
-                imageBright = brightness_control(image, int(bright))
+                imageBright = brightness_control(image, int(bright), object_discrimination)
                 cv2.imwrite(os.path.join(saveDirectory,
                                      "brightness", imageType + str(imageIndex) +
                                      "Bright" + str(count) + ".jpg"), imageBright)
@@ -262,13 +279,11 @@ if __name__ == '__main__':
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
     objectImages = loadImages(Object_DIRECTORY)
-
     objectAugmentation(objectImages, doAugmentation=doObjectAugmentation)
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
 
     backgroundImages = loadImages(Background_DIRECTORY)
-
     backgroundAugmentation(backgroundImages, doAugmenation=doBackgroundAugmentation)
 
     print("Running Time: ", time.time() - start, "    Current Time: ", time.time())
