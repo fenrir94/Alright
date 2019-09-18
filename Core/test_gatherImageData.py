@@ -7,5 +7,5 @@ if __name__ == '__main__':
     config.read('../config.ini')
 
     # keyword convert to lower characters
-    # pixabay_crawling_images(config['CRAWLING']['SEARCH_KEYWORD'])
-    extract_hash_tags()
+    pixabay_crawling_images(config['CRAWLING']['SEARCH_KEYWORD'])
+    # extract_hash_tags()
