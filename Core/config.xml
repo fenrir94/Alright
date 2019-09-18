@@ -2,20 +2,17 @@
 <configurations>
     <!--comment-->
     <Directories>
-        <Directory file="Model">logs</Directory>
-        <Directory file="mask_rcnn_coco.h5">mask_rcnn_coco.h5</Directory>
-        <Directory file="images">D:\images</Directory>
+        <Directory file="images">C:\Users\user\Documents\GitHub\Alright\images</Directory>
+        <!--
         <Directory file="testImages">D:\images\testimages</Directory>
         <Directory file="object">D:\images\object</Directory>
-        <Directory file="objectAugmented"></Directory>
-        <Directory file="brightness"></Directory>
-        <Directory file="flip"></Directory>
-        <Directory file="scale"></Directory>
+        <Directory file="objectAugmented">D:\images\object\objectAugmented</Directory>
         <Directory file="background"></Directory>
         <Directory file="backgroundAugmented"></Directory>
         <Directory file="composedImage">D:\images\composedImage</Directory>
         <Directory file="composedImageAugmented"></Directory>
         <Directory file="weather">D:\images\weather</Directory>
+        -->
     </Directories>
     <classes>
         <class></class>
