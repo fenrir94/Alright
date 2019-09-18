@@ -1,14 +1,15 @@
 import configparser
 import requests
+import matplotlib.pylab as plt
 import os
 import queue
 from bs4 import BeautifulSoup
+
 
 def test():
     config = configparser.ConfigParser()
     config.read('../config.ini')
 
-    # print(config.items('CONSISTENCY'))
     url = 'http://swoogle.umbc.edu/SimService/GetSimilarity'
     idx = 0
     phrase1 = ""
@@ -36,6 +37,8 @@ def test():
                 phrases1.append(tags)
             idx += 1
 
+
+
     csv_columns = ['phrase1', 'phrase2', 'score']
     csv_file = os.path.abspath("../semantic_similarity_score.csv")
     try:
@@ -48,3 +51,31 @@ def test():
                     csvfile.write(f"{phrases1[idx]},{phrase2},{similarity_scores.get()}\n")
     except IOError:
         print("I/O error")
+
+
+def create_graph(background_keyword):
+    config = configparser.ConfigParser()
+    config.read('../config.ini')
+    matching_list = config['CONSISTENCY'][background_keyword].replace('\n', ' ').split(', ')
+
+    url = 'http://swoogle.umbc.edu/SimService/GetSimilarity'
+    phrases2 = []
+    similarity_scores = []
+    for phrase2 in matching_list:
+        page_src = requests.post(url,
+                                 params={'operation': 'phrase_sim', 'phrase1': background_keyword, 'phrase2': phrase2,
+                                         'sim_type': 'relation',
+                                         'corpus': 'webbase',
+                                         'query': 'Get Similarity'})
+        soup_page_src = BeautifulSoup(page_src.text, 'lxml')
+        similarity_score_src = soup_page_src.find('textarea')
+        similarity_score = similarity_score_src.get_text().replace('\n', ' score is ').split('score is ')[1][:-1]
+        similarity_scores.append(float(similarity_score))
+        phrases2.append(phrase2)
+
+    print(similarity_scores)
+
+    plt.figure(figsize=(19, 10))
+    plt.title(f"{background_keyword} and objects")
+    plt.plot(phrases2, similarity_scores)
+    plt.show()
