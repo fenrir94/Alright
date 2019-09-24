@@ -2,7 +2,7 @@
 <configurations>
     <!--comment-->
     <Directories>
-        <Directory file="images">C:\Users\user\Documents\GitHub\Alright\images</Directory>
+        <Directory file="images">D:/composed/</Directory>
         <!--
         <Directory file="testImages">D:\images\testimages</Directory>
         <Directory file="object">D:\images\object</Directory>
@@ -23,14 +23,12 @@
             <parameter>1</parameter>
         </Augmentation>
         <Augmentation name="scale">
+            <parameter>0.4</parameter>
             <parameter>0.6</parameter>
-            <parameter>0.7</parameter>
             <parameter>0.8</parameter>
-            <parameter>0.9</parameter>
-            <parameter>1.1</parameter>
             <parameter>1.2</parameter>
-            <parameter>1.3</parameter>
             <parameter>1.4</parameter>
+            <parameter>1.6</parameter>
         </Augmentation>
         <Augmentation name="weather">
             <parameter>rain</parameter>
@@ -57,17 +55,17 @@
         <AugmentationTarget target="Object">True<Augmentations>
                 <Augmentation name="flip">True</Augmentation>
                 <Augmentation name="scale">True</Augmentation>
-                <Augmentation name="brightness">True</Augmentation>
+                <Augmentation name="brightness">Flase</Augmentation>
             </Augmentations>
         </AugmentationTarget>
         <!--comment-->
         <AugmentationTarget target="Background">True<Augmentations>
                 <Augmentation name="flip">True</Augmentation>
-                <Augmentation name="brightness">True</Augmentation>
+                <Augmentation name="brightness">False</Augmentation>
             </Augmentations>
         </AugmentationTarget>
         <!--comment-->
-        <AugmentationTarget target="ComposedImage">True<Augmentations>
+        <AugmentationTarget target="ComposedImage">False<Augmentations>
                 <Augmentation name="noise">True</Augmentation>
                 <Augmentation name="weather">True</Augmentation>
                 <Augmentation name="brightness">True</Augmentation>

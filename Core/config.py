@@ -5,14 +5,6 @@ import Mask_RCNN.mrcnn.model as modellib
 from Mask_RCNN.samples.coco import coco
 import xml.etree.ElementTree as elementree
 
-def createFolder(directory):
-    try:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-            print("Folder Created - " + directory)
-    except OSError:
-        print("Error")
-
 tree = elementree.parse("config.xml")
 root = tree.getroot()
 # print(root.tag)
@@ -24,28 +16,71 @@ COCO_MODEL_PATH = os.path.join(ROOT_DIRECTORY, "mask_rcnn_coco.h5")
 if not os.path.exists(COCO_MODEL_PATH):
     utils.download_trained_weights(COCO_MODEL_PATH)
 
-# IMAGE_DIRECTORY = os.path.join("D:", "images")
+# IMAGE_DIRECTORY = "D:/evaluateImages"
 # print(IMAGE_DIRECTORY)
 
 IMAGE_DIRECTORY = root.find("Directories").find("Directory").text
 print(IMAGE_DIRECTORY)
 
-TEST_IMAGE_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "testimages")
+TEST_IMAGE_DIRECTORY = IMAGE_DIRECTORY + "testimages/"
 
-Object_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "object")
-Object_Augmented_DIRECTORY = os.path.join(Object_DIRECTORY, "objectAugmented")
-Object_Brightness_DIRECTORY = os.path.join(Object_Augmented_DIRECTORY, "brightness")
-Object_Flip_DIRECTORY = os.path.join(Object_Augmented_DIRECTORY, "flip")
-Object_Scale_DIRECTORY = os.path.join(Object_Augmented_DIRECTORY, "scale")
+# Object_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "object")
+Object_DIRECTORY = IMAGE_DIRECTORY + "object/"
+print(Object_DIRECTORY)
+Object_Augmented_DIRECTORY = Object_DIRECTORY + "objectAugmented/"
+Object_Brightness_DIRECTORY = Object_Augmented_DIRECTORY + "brightness/"
+Object_Flip_DIRECTORY = Object_Augmented_DIRECTORY + "flip/"
+Object_Scale_DIRECTORY = Object_Augmented_DIRECTORY + "scale/"
 
-Background_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "background")
-Background_Crawling_DIRECTORY = os.path.join(Background_DIRECTORY, "crawledImages")
-Background_Augmented_DIRECTORY = os.path.join(Background_DIRECTORY, "backgroundAugmented")
-Background_Brightness_DIR = os.path.join(Background_Augmented_DIRECTORY, "brightness")
-Background_Flip_DIRECTORY = os.path.join(Background_Augmented_DIRECTORY, "flip")
+Background_DIRECTORY = IMAGE_DIRECTORY + "background/"
+Background_Crawling_DIRECTORY = Background_DIRECTORY + "crawledImages/"
+Background_Augmented_DIRECTORY = Background_DIRECTORY + "backgroundAugmented/"
+Background_Brightness_DIRECTORY = Background_Augmented_DIRECTORY + "brightness/"
+Background_Flip_DIRECTORY = Background_Augmented_DIRECTORY + "flip/"
+Background_Scale_DIRECTORY = Background_Augmented_DIRECTORY + "scale/"
 
-ComposedImage_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "composedImage")
-ComposedImage_Augmented_DIRECTORY = os.path.join(ComposedImage_DIRECTORY, "composedImageAugmented")
+# ComposedImage_DIRECTORY = os.path.join(IMAGE_DIRECTORY, "composedImage")
+ComposedImage_DIRECTORY = IMAGE_DIRECTORY + "composedImage/"
+ComposedImage_Augmented_DIRECTORY = ComposedImage_DIRECTORY +"composedImageAugmented/"
+ComposedImage_Noise_DIRECTORY = ComposedImage_Augmented_DIRECTORY + "noise/"
+ComposedImage_Weather_DIRECTORY = ComposedImage_Augmented_DIRECTORY + "weather/"
+ComposedImage_Brightness_DIRECTORY = ComposedImage_Augmented_DIRECTORY + "brightness/"
+
+Annotation_DIRECTORY = IMAGE_DIRECTORY + "annotation/"
+Annotation_Test_DIRECTORY = Annotation_DIRECTORY + "test/"
+# Annotation_Object_DIRECTORY = Annotation_DIRECTORY + "object/"
+Annotation_Composed_DIRECTORY = Annotation_DIRECTORY + "composed/"
+
+
+def createFolder(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            print("Folder Created - " + directory)
+        else:
+            print("Folder Existed - " + directory)
+    except OSError:
+        print("Error: Creating directory" + directory)
+
+def generateDirectories():
+    createFolder(Object_DIRECTORY)
+    createFolder(Object_Augmented_DIRECTORY)
+    createFolder(Object_Brightness_DIRECTORY)
+    createFolder(Object_Flip_DIRECTORY)
+    createFolder(Object_Scale_DIRECTORY)
+
+    createFolder(Background_Augmented_DIRECTORY)
+    createFolder(Background_Scale_DIRECTORY)
+    createFolder(Background_Brightness_DIRECTORY)
+    createFolder(Background_Flip_DIRECTORY)
+
+    createFolder(ComposedImage_DIRECTORY)
+    createFolder(ComposedImage_Augmented_DIRECTORY)
+    createFolder(ComposedImage_Weather_DIRECTORY)
+    createFolder(ComposedImage_Noise_DIRECTORY)
+    createFolder(ComposedImage_Brightness_DIRECTORY)
+
+    createFolder(Annotation_Composed_DIRECTORY)
 
 class InferenceConfig(coco.CocoConfig):
     GPU_COUNT = 1

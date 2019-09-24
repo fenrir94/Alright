@@ -3,8 +3,6 @@ import cv2
 import numpy as np
 import os
 
-ROOT_DIR = os.path.abspath("../")
-
 from Mask_RCNN.mrcnn import utils
 import Mask_RCNN.mrcnn.model as modellib
 
@@ -52,9 +50,9 @@ def extractObject(image, boxes, masks, class_ids):
 
     image_masked = apply_mask_inverse(clone, mask, color)
     roi = image_masked[y1:y2, x1:x2]
-    cv2.imwrite(os.path.join(ROOT_DIR, "images/object/Object"+str(object_count)+".jpg"), roi)
 
     object_count+=1
+    return roi
 
 
 j = 0;
@@ -78,7 +76,7 @@ def extractObjects(image, boxes, masks, class_ids):
 
         image_masked = apply_mask_inverse(clone, mask, color)
         roi = image_masked[y1:y2, x1:x2]
-        cv2.imwrite(os.path.join(ROOT_DIR, "images/object/Object"+str(j)+str(i)+".jpg"), roi)
+        # cv2.imwrite(os.path.join(ROOT_DIR, "images/object/Object"+str(j)+str(i)+".jpg"), roi)
 
     j=j+1
 
