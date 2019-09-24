@@ -11,7 +11,7 @@ def noisy(noise_type, image):
         gauss = np.random.normal(mean, sigma, (row, col, channel))
         gauss = gauss.reshape(row, col, channel)
         return image + gauss
-    elif noise_type == "s&p":
+    elif noise_type == "salt_pepper":
         s_vs_p = 0.5
         amount = 0.004
         out = np.copy(image)
