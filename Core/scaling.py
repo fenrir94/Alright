@@ -17,24 +17,24 @@ def scale(object_image, scale_rate):
     return cv2.resize(object_image, dsize=(0, 0), fx=scale_rate, fy=scale_rate)
 
 
-def rainy(image, effect_number, composite_rate=0.6):
+def rainy(image, effect_number, composite_rate=0.7):
     if type(composite_rate) is int:
         composite_rate = float(composite_rate) / 100
-    effect = '../images/weather/rain' + str(effect_number) + '.jpg'
+    effect = '../images/weather/rain' + str(effect_number) + '_' + str(composite_rate) + '.jpg'
     return weather_effect(image, effect, composite_rate)
 
 
-def fog(image, effect_number, composite_rate=0.3):
+def fog(image, effect_number, composite_rate=0.7):
     if type(composite_rate) is int:
         composite_rate = float(composite_rate) / 100
-    effect = '../images/weather/fog' + str(effect_number) + '.jpg'
+    effect = '../images/weather/fog' + str(effect_number) + '_' + str(composite_rate) + '.jpg'
     return weather_effect(image, effect, composite_rate)
 
 
-def snow(image, effect_number, composite_rate=0.6):
+def snow(image, effect_number, composite_rate=0.7):
     if type(composite_rate) is int:
         composite_rate = float(composite_rate) / 100
-    effect = '../images/weather/snow' + str(effect_number) + '.jpg'
+    effect = '../images/weather/snow' + str(effect_number) + '_' + str(composite_rate) + '.jpg'
     return weather_effect(image, effect, composite_rate)
 
 
@@ -42,7 +42,10 @@ def weather_effect(image, effect_path, composite_rate):
     effect_image = cv2.imread(effect_path, cv2.IMREAD_COLOR)
     image_height, image_width, _ = image.shape
 
-    effect_image = cv2.resize(effect_image, dsize=(image_width, image_height))
+    try:
+        effect_image = cv2.resize(effect_image, dsize=(image_width, image_height), interpolation=cv2.INTER_CUBIC)
+    except:
+        print("Error")
     return cv2.addWeighted(image, composite_rate, effect_image, 1-composite_rate, 0)
 
 
