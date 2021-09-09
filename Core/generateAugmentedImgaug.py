@@ -83,8 +83,7 @@ def imgaugBrightness(images, imageNames, label, dataFolder):
         createFolder(IMAGE_DIRECTORY + AugmentataionFolderName)
         createFolder(IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder)
         createFolder(SAVE_DIRECTORY)
-        object_discrimination = 0
-        imgaugBright = iaa.AddToBrightness()
+        imgaugBright = iaa.AddToBrightness(brightnessRate)
         for imageIndex, image in enumerate(images):
             print("Image Brightness: ", imageIndex, ", BrightnessRate", brightnessRate)
             imageBright = imgaugBright(image=image)
@@ -94,7 +93,7 @@ def imgaugBrightness(images, imageNames, label, dataFolder):
 def imgaugGaussian(images, imageNames, label, dataFolder):
     GaussianScales = [0.1, 0.2, 0.3, 0.4, 0.5]
     for GaussianScale in GaussianScales:
-        AugmentataionFolderName = "Gausain_imgaug_" + str(GaussianScale) + "/"
+        AugmentataionFolderName = "Gaussian_imgaug_" + str(GaussianScale) + "/"
         SAVE_DIRECTORY = IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder + label + "/"
         createFolder(IMAGE_DIRECTORY + AugmentataionFolderName)
         createFolder(IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder)
@@ -171,6 +170,66 @@ def imgaugWeather(images, imageNames, label, dataFolder):
                 cv2.imwrite(SAVE_DIRECTORY + imageNames[imageIndex] + "_imgaug_Snow.png",
                             imageSnow)
 
+def imgaugZoom(images, imageNames, label, dataFolder):
+    scales = [0.7, 0.8, 0.9, 1.1, 1.2, 1.3 ]
+    for scale in scales:
+        AugmentataionFolderName = "zoom_imgaug_" + str(scale) + "/"
+        SAVE_DIRECTORY = IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder + label + "/"
+        createFolder(IMAGE_DIRECTORY + AugmentataionFolderName)
+        createFolder(IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder)
+        createFolder(SAVE_DIRECTORY)
+        imgaugZoom = iaa.Affine(scale=scale)
+        for imageIndex, image in enumerate(images):
+            print("Image Zoom: ", imageIndex, ", Angle ", scale)
+            imageZoom = imgaugZoom(image=image)
+            cv2.imwrite(
+                SAVE_DIRECTORY + imageNames[imageIndex] + "_zoom_imgaug_" + str(scale) + ".png",
+                imageZoom)
+
+
+
+def imgaugRotate(images, imageNames, label, dataFolder):
+    angles = [30, 60, 90, 120, 150, 180]
+    for angle in angles:
+        AugmentataionFolderName = "rotate_imgaug_" + str(angle) + "/"
+        SAVE_DIRECTORY = IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder + label + "/"
+        createFolder(IMAGE_DIRECTORY + AugmentataionFolderName)
+        createFolder(IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder)
+        createFolder(SAVE_DIRECTORY)
+        imgaugRotate = iaa.Rotate(angle)
+        for imageIndex, image in enumerate(images):
+            print("Image Rotate: ", imageIndex, ", Angle ", angle)
+            imageRotate = imgaugRotate(image=image)
+            cv2.imwrite(
+                SAVE_DIRECTORY + imageNames[imageIndex] + "_rotate_imgaug_" + str(angle) + ".png",
+                imageRotate)
+
+
+
+
+def imgaugCompositeRandom(images, imageNames, label, dataFolder):
+    compositeIndex = 0
+    AugmentataionFolderName = "composite_imgaug_" + str(compositeIndex) + "/"
+    SAVE_DIRECTORY = IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder + label + "/"
+    createFolder(IMAGE_DIRECTORY + AugmentataionFolderName)
+    createFolder(IMAGE_DIRECTORY + AugmentataionFolderName + dataFolder)
+    createFolder(SAVE_DIRECTORY)
+    imgaugComposite = iaa.Sequential([
+        iaa.Fliplr(0.5),
+        iaa.MultiplyBrightness((0.5, 1.5)),
+        iaa.AdditiveGaussianNoise(scale=(0, 0.05*255)),
+        iaa.SaltAndPepper(p=(0.0, 0.03)),
+        iaa.Cutout(nb_iterations=(1, 5), size=0.2),
+        iaa.Affine(scale=(0.5, 1.5), rotate=(0, 180))
+    ])
+
+    for imageIndex, image in enumerate(images):
+        print("Image Composite: ", imageIndex, ",  Composite ", compositeIndex)
+        imageComposite = imgaugComposite(image=image)
+        cv2.imwrite(
+            SAVE_DIRECTORY + imageNames[imageIndex] + "_rotate_imgaug_" + str(compositeIndex) + ".png",
+            imageComposite)
+
 
 
 
@@ -207,9 +266,12 @@ if __name__ == '__main__':
 
         # imgaugCutout(imageOrigin, imageNames, label, "test/")
         # imgaugBrightness(imageOrigin, imageNames, label, "test/")
-        imgaugGaussian(imageOrigin, imageNames, label, "test/")
+        # imgaugGaussian(imageOrigin, imageNames, label, "test/")
         # imgaugSaltandPepper(imageOrigin, imageNames, label, "test/")
         # imgaugWeather(imageOrigin, imageNames, label, "test/")
+        # imgaugZoom(imageOrigin, imageNames, label, "test/")
+        # imgaugRotate(imageOrigin, imageNames, label, "test/")
+        imgaugCompositeRandom(imageOrigin, imageNames, label, "test/")
 
 
 
