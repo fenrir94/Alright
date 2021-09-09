@@ -218,8 +218,8 @@ def imgaugCompositeRandom(images, imageNames, label, dataFolder):
         iaa.Fliplr(0.5),
         iaa.MultiplyBrightness((0.5, 1.5)),
         iaa.AdditiveGaussianNoise(scale=(0, 0.05*255)),
-        iaa.SaltAndPepper(p=(0.0, 0.03)),
-        iaa.Cutout(nb_iterations=(1, 5), size=0.2),
+        iaa.SaltAndPepper(p=(0.0, 0.05)),
+        iaa.Cutout(nb_iterations=(1, 5), size=0.1),
         iaa.Affine(scale=(0.5, 1.5), rotate=(0, 180))
     ])
 
